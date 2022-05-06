@@ -20,7 +20,7 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   FRONTEND_NAME: ${{ github.repository }}-frontend
-  BACKEND_NAME: ${{ github.repository }}-backennd
+  BACKEND_NAME: ${{ github.repository }}-backend
 
 
 jobs:
