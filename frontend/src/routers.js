@@ -1,29 +1,11 @@
 import {createRouter, createWebHistory} from "vue-router";
-import MessageSend from "@/components/MessageSend";
-import CreateAccount from "@/components/CreateAccount";
-import LandingPage from "@/components/LandingPage";
-import LoginPage from "@/components/LoginPage";
+import HelloWorld from "@/components/HelloWorld";
 
 const routes = [
     {
         path: '/',
-        name: 'landingPage',
-        component: LandingPage
-    },
-    {
-        path: '/message',
-        name: 'messageSend',
-        component: MessageSend
-    },
-    {
-        path: '/login',
-        name: 'loginPage',
-        component: LoginPage
-    },
-    {
-        path: '/create',
-        name: 'createAccount',
-        component: CreateAccount
+        name: 'HelloWorld',
+        component: HelloWorld
     }
 ]
 
