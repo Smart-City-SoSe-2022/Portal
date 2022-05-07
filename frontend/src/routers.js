@@ -1,11 +1,17 @@
 import {createRouter, createWebHistory} from "vue-router";
 import HelloWorld from "@/components/HelloWorld";
+import MessageSend from "@/components/MessageSend";
 
 const routes = [
     {
         path: '/',
-        name: 'HelloWorld',
+        name: 'helloWorld',
         component: HelloWorld
+    },
+    {
+        path: '/message',
+        name: 'messageSend',
+        component: MessageSend
     }
 ]
 
