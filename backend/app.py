@@ -66,7 +66,7 @@ def get_users():
 
 @app.route('/message', methods=['POST'])
 def send_message():
-    routing_key = '*.#'
+    routing_key = request.json['routing_key']
     message = request.json['message']
 
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
@@ -76,7 +76,7 @@ def send_message():
         exchange='microservice.eventbus', routing_key=routing_key, body=message)
     connection.close()
 
-    return "Message sent"
+    return f"Message sent: {message}"
 
 
 if __name__ == '__main__':
