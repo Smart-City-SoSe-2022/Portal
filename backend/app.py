@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import datetime
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
+import pika
 
 app = Flask(__name__)
 CORS(app)
@@ -60,6 +61,21 @@ def get_users():
     all_users = User.query.all()
 
     return users_schema.jsonify(all_users)
+
+
+@app.route('/message', methods=['POST'])
+def send_message():
+    routing_key = '*.#'
+    message = request.json['message']
+
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    channel = connection.channel()
+    channel.exchange_declare(exchange='microservice.eventbus', exchange_type='topic')
+    channel.basic_publish(
+        exchange='microservice.eventbus', routing_key=routing_key, body=message)
+    connection.close()
+
+    return "Message sent"
 
 
 if __name__ == '__main__':
