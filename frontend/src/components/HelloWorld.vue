@@ -23,16 +23,9 @@
     </ul>
     <h3>My Links</h3>
     <ul>
-      <li>
-        <router-link class="link-style" to="/message">
-          Send Message
+      <router-link class="link-style" to="/message">
+          Message Send
         </router-link>
-      </li>
-      <li>
-        <router-link class="link-style" to="/create">
-          Create Account
-        </router-link>
-      </li>
     </ul>
     <h3>Ecosystem</h3>
     <ul>
