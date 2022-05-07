@@ -1,6 +1,7 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png">
   <HelloWorld msg="This is a test for CI/CD"/>
+  <router-view/>
 </template>
 
 <script>
