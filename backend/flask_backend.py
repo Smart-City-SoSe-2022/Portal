@@ -19,16 +19,22 @@ ma = Marshmallow(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    forename = db.Column(db.String(50))
-    lastname = db.Column(db.String(50))
+    forename = db.Column(db.String(50), nullable=False)
+    lastname = db.Column(db.String(50), nullable=False)
     gender = db.Column(db.String(50))
-    password = db.Column(db.String(50))
+    address = db.Column(db.String(50), nullable=False)
+    plz = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(50), nullable=False)
     creation_date = db.Column(db.DateTime, default=datetime.datetime.now())
 
-    def __init__(self, forename, lastname, gender, password):
+    def __init__(self, forename, lastname, gender, address, plz, email, password):
         self.forename = forename
         self.lastname = lastname
         self.gender = gender
+        self.address = address
+        self.plz = plz
+        self.email = email
         self.password = password
 
 
@@ -50,10 +56,13 @@ def hello_world():
 def create_account():
     forename = request.json['forename']
     lastname = request.json['lastname']
-    gender = request.json['gender']
+    gender = request.json.get('gender')
+    address = request.json['address']
+    plz = request.json['plz']
+    email = request.json['email']
     password = request.json['password']
 
-    user = User(forename, lastname, gender, password)
+    user = User(forename, lastname, gender, address, plz, email, password)
     db.session.add(user)
     db.session.commit()
 
