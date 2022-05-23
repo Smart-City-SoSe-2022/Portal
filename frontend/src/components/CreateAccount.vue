@@ -21,29 +21,19 @@
                         d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"></path>
                   </svg>
                 </div>
-                <form class="text-center" method="post" @submit.prevent="createAccount">
-                  <div class="mb-3">
-                    <input class="form-control" type="text" name="forename" placeholder="Vorname" v-model="forename"/>
+                <form class="text-center" method="post">
+                  <div class="mb-3"><input class="form-control" type="text" name="forename" placeholder="Vorname"/>
                   </div>
-                  <div class="mb-3">
-                    <input class="form-control" type="text" name="lastname" placeholder="Nachname" v-model="lastname"/>
+                  <div class="mb-3"><input class="form-control" type="text" name="lastname" placeholder="Nachname"/>
                   </div>
-                  <div class="mb-3">
-                    <input class="form-control" type="text" name="gender" placeholder="Geschlecht" v-model="gender"/>
+                  <div class="mb-3"><input class="form-control" type="text" name="gender" placeholder="Geschlecht"/>
                   </div>
-                  <div class="mb-3">
-                    <input class="form-control" type="text" name="address" placeholder="Straße" v-model="address"/>
+                  <div class="mb-3"><input class="form-control" type="text" name="address" placeholder="Straße"/>
                   </div>
-                  <div class="mb-3">
-                    <input class="form-control" type="number" name="plz" placeholder="PLZ" v-model="plz"/>
-                  </div>
-                  <div class="mb-3">
-                    <input class="form-control" type="email" name="email" placeholder="Email" v-model="email"/>
-                  </div>
-                  <div class="mb-3">
-                    <input class="form-control" type="password" name="password"
-                           placeholder="Password" v-model="password"/>
-                  </div>
+                  <div class="mb-3"><input class="form-control" type="number" name="plz" placeholder="PLZ"/></div>
+                  <div class="mb-3"><input class="form-control" type="email" name="email" placeholder="Email"/></div>
+                  <div class="mb-3"><input class="form-control" type="password" name="password"
+                                           placeholder="Password"/></div>
                   <div class="mb-3">
                     <button class="btn btn-primary d-block w-100" type="submit">Bestätigen</button>
                   </div>
@@ -63,44 +53,14 @@ export default {
 
   data() {
     return {
-      forename: null,
-      lastname: null,
-      gender: null,
-      address: null,
-      plz: null,
-      email: null,
-      password: null
+      routing_key: null,
+      message: null,
+      error: null
     }
   },
   methods: {
     createAccount() {
-      var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
 
-      var raw = JSON.stringify({
-        "forename": this.forename,
-        "lastname": this.lastname,
-        "gender": this.gender,
-        "address": this.address,
-        "plz": this.plz,
-        "email": this.email,
-        "password": this.password
-      });
-
-      var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-      };
-
-      fetch("http://localhost:5000/create", requestOptions)
-          .then(response => response.text())
-          .then(result => console.log(result))
-          .then(() => this.$router.push({
-            name: "landingPage"
-          }))
-          .catch(error => console.log('error', error));
     },
     sendMessage() {
       if (!this.message) {
