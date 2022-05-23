@@ -1,4 +1,3 @@
-import json.encoder
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 import datetime
@@ -19,30 +18,23 @@ ma = Marshmallow(app)
 
 
 class User(db.Model):
-    """ User Model """
     id = db.Column(db.Integer, primary_key=True)
-    forename = db.Column(db.String(50), nullable=False)
-    lastname = db.Column(db.String(50), nullable=False)
+    forename = db.Column(db.String(50))
+    lastname = db.Column(db.String(50))
     gender = db.Column(db.String(50))
-    address = db.Column(db.String(50), nullable=False)
-    plz = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(50))
     creation_date = db.Column(db.DateTime, default=datetime.datetime.now())
 
-    def __init__(self, forename, lastname, gender, address, plz, email, password):
+    def __init__(self, forename, lastname, gender, password):
         self.forename = forename
         self.lastname = lastname
         self.gender = gender
-        self.address = address
-        self.plz = plz
-        self.email = email
         self.password = password
 
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'forename', 'lastname', 'gender', 'address', 'plz', 'email')
+        fields = ('id', 'forename', 'lastname', 'gender', 'password', 'creation_date')
 
 
 user_schema = UserSchema()
@@ -56,42 +48,17 @@ def hello_world():
 
 @app.route('/create', methods=['POST'])
 def create_account():
-    """ Creates a user by reading all information from the request as json """
     forename = request.json['forename']
     lastname = request.json['lastname']
-    gender = request.json.get('gender')  # json.get() because this way, if value is null, there is no exception
-    address = request.json['address']
-    plz = request.json['plz']
-    email = request.json['email']
+    gender = request.json['gender']
     password = request.json['password']
 
-    user = User(forename, lastname, gender, address, plz, email, password)
+    user = User(forename, lastname, gender, password)
     db.session.add(user)
     db.session.commit()
 
-    routing_key = 'portal.account.created'
-    data = {"id": user.id}
-    publish_rabbitmq(routing_key, data)
-
-    return jsonify({"msg": "Account created"})
-
-
-@app.route('/delete/<user_id>', methods=['DELETE'])
-def delete_account(user_id):
-    """Deletes the user with the given user_id, if the user exists"""
-    # Delete user, if user with user_id exists
-    user = User.query.get(int(user_id))
-    if user is not None:
-        db.session.delete(user)
-        db.session.commit()
-
-        # Put deleted user data in data for rabbitmq publish
-        routing_key = 'portal.account.deleted'
-        data = {"TODO": "NOT IMPLEMENTED YET", "id": int(user_id)}  # Get user data, without password
-        publish_rabbitmq(routing_key, data)
-        return user_schema.jsonify(user)
-    else:
-        return jsonify({"msg": "Account not found"})
+    # return 'Account created'
+    return user_schema.jsonify(user)
 
 
 @app.route('/get', methods=['GET'])
@@ -116,16 +83,5 @@ def send_message():
     return f"Message sent: {message}"
 
 
-def publish_rabbitmq(routing_key, data):
-    """ Publish a message given with data on the given routing key """
-    message = json.dumps(data)
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-    channel = connection.channel()
-    channel.exchange_declare(exchange='microservice.eventbus', exchange_type='topic')
-    channel.basic_publish(
-        exchange='microservice.eventbus', routing_key=routing_key, body=message)
-    connection.close()
-
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(debug=True)
