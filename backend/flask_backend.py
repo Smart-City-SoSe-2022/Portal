@@ -19,6 +19,7 @@ ma = Marshmallow(app)
 
 
 class User(db.Model):
+    """ User Model """
     id = db.Column(db.Integer, primary_key=True)
     forename = db.Column(db.String(50), nullable=False)
     lastname = db.Column(db.String(50), nullable=False)
@@ -55,9 +56,10 @@ def hello_world():
 
 @app.route('/create', methods=['POST'])
 def create_account():
+    """ Creates a user by reading all information from the request as json """
     forename = request.json['forename']
     lastname = request.json['lastname']
-    gender = request.json.get('gender')
+    gender = request.json.get('gender')  # json.get() because this way, if value is null, there is no exception
     address = request.json['address']
     plz = request.json['plz']
     email = request.json['email']
@@ -76,13 +78,20 @@ def create_account():
 
 @app.route('/delete/<user_id>', methods=['DELETE'])
 def delete_account(user_id):
+    """Deletes the user with the given user_id, if the user exists"""
     # Delete user, if user with user_id exists
-    # Put deleted user data in data for rabbitmq publish
+    user = User.query.get(int(user_id))
+    if user is not None:
+        db.session.delete(user)
+        db.session.commit()
 
-    routing_key = 'portal.account.deleted'
-    data = {"TODO": "NOT IMPLEMENTED YET", "id": int(user_id)}  # Get user data, without password
-    publish_rabbitmq(routing_key, data)
-    return jsonify({"msg": "Account deleted"})
+        # Put deleted user data in data for rabbitmq publish
+        routing_key = 'portal.account.deleted'
+        data = {"TODO": "NOT IMPLEMENTED YET", "id": int(user_id)}  # Get user data, without password
+        publish_rabbitmq(routing_key, data)
+        return user_schema.jsonify(user)
+    else:
+        return jsonify({"msg": "Account not found"})
 
 
 @app.route('/get', methods=['GET'])
@@ -108,6 +117,7 @@ def send_message():
 
 
 def publish_rabbitmq(routing_key, data):
+    """ Publish a message given with data on the given routing key """
     message = json.dumps(data)
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
     channel = connection.channel()
