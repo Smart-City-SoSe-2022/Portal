@@ -1,3 +1,4 @@
+import json.encoder
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 import datetime
@@ -66,8 +67,22 @@ def create_account():
     db.session.add(user)
     db.session.commit()
 
-    # return 'Account created'
-    return user_schema.jsonify(user)
+    routing_key = 'portal.account.created'
+    data = {"id": user.id}
+    publish_rabbitmq(routing_key, data)
+
+    return jsonify({"msg": "Account created"})
+
+
+@app.route('/delete/<user_id>', methods=['DELETE'])
+def delete_account(user_id):
+    # Delete user, if user with user_id exists
+    # Put deleted user data in data for rabbitmq publish
+
+    routing_key = 'portal.account.deleted'
+    data = {"TODO": "NOT IMPLEMENTED YET", "id": int(user_id)}  # Get user data, without password
+    publish_rabbitmq(routing_key, data)
+    return jsonify({"msg": "Account deleted"})
 
 
 @app.route('/get', methods=['GET'])
@@ -90,6 +105,16 @@ def send_message():
     connection.close()
 
     return f"Message sent: {message}"
+
+
+def publish_rabbitmq(routing_key, data):
+    message = json.dumps(data)
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    channel = connection.channel()
+    channel.exchange_declare(exchange='microservice.eventbus', exchange_type='topic')
+    channel.basic_publish(
+        exchange='microservice.eventbus', routing_key=routing_key, body=message)
+    connection.close()
 
 
 if __name__ == '__main__':
