@@ -19,7 +19,7 @@ ma = Marshmallow(app)
 
 
 class User(db.Model):
-    """ User Model """
+    """User Model"""
     id = db.Column(db.Integer, primary_key=True)
     forename = db.Column(db.String(50), nullable=False)
     lastname = db.Column(db.String(50), nullable=False)
@@ -49,14 +49,9 @@ user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
 
-@app.route('/', methods=['GET'])
-def hello_world():
-    return 'Hello World!'
-
-
 @app.route('/create', methods=['POST'])
 def create_account():
-    """ Creates a user by reading all information from the request as json """
+    """Creates a user by reading all information from the request as json"""
     forename = request.json['forename']
     lastname = request.json['lastname']
     gender = request.json.get('gender')  # json.get() because this way, if value is null, there is no exception
@@ -74,6 +69,26 @@ def create_account():
     publish_rabbitmq(routing_key, data)
 
     return jsonify({"msg": "Account created"})
+
+
+@app.route('/update/<user_id>', methods=['PUT'])
+def update_account(user_id):
+    """Updates user account information"""
+    # Update user, if user with user_id exists
+    user = User.query.get(int(user_id))
+    if user is not None:
+        user.forename = update_if_request_contains(user.forename, request.json.get('forename'))
+        user.lastname = update_if_request_contains(user.lastname, request.json.get('lastname'))
+        user.gender = update_if_request_contains(user.gender, request.json.get('gender'))
+        user.address = update_if_request_contains(user.address, request.json.get('address'))
+        user.plz = update_if_request_contains(user.plz, request.json.get('plz'))
+        user.email = update_if_request_contains(user.email, request.json.get('email'))
+        user.password = update_if_request_contains(user.password, request.json.get('password'))
+
+        db.session.commit()
+        return jsonify({"TODO": "NOT IMPLEMENTED YET", "msg:": "Account information updated"})
+    else:
+        return jsonify({"msg": "Account not found"})
 
 
 @app.route('/delete/<user_id>', methods=['DELETE'])
@@ -96,28 +111,24 @@ def delete_account(user_id):
 
 @app.route('/get', methods=['GET'])
 def get_users():
+    """Return user data"""
+
+    # Should return data from a single user, but not implemented yet
     all_users = User.query.all()
 
     return users_schema.jsonify(all_users)
 
 
-@app.route('/message', methods=['POST'])
-def send_message():
-    routing_key = request.json['routing_key']
-    message = request.json['message']
+def update_if_request_contains(user_val, request_val):
+    new_val = user_val
+    if request_val is not None:
+        new_val = request_val
 
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-    channel = connection.channel()
-    channel.exchange_declare(exchange='microservice.eventbus', exchange_type='topic')
-    channel.basic_publish(
-        exchange='microservice.eventbus', routing_key=routing_key, body=message)
-    connection.close()
-
-    return f"Message sent: {message}"
+    return new_val
 
 
 def publish_rabbitmq(routing_key, data):
-    """ Publish a message given with data on the given routing key """
+    """Publish a message given with data on the given routing key"""
     message = json.dumps(data)
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
     channel = connection.channel()

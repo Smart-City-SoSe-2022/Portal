@@ -1,4 +1,4 @@
-from flask_backend import app, db
+from app import app, db
 
 with app.test_request_context():
     db.init_app(app)
