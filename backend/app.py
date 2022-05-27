@@ -96,6 +96,11 @@ def update_account(user_id):
         user.password = update_if_request_contains(user.password, request.json.get('password'))
 
         db.session.commit()
+
+        routing_key = 'portal.account.updated'
+        data = {"id": user.id}
+        publish_rabbitmq(routing_key, data)
+
         return jsonify({"TODO": "NOT IMPLEMENTED YET", "msg:": "Account information updated"})
     else:
         return jsonify({"msg": "Account not found"})
@@ -112,7 +117,7 @@ def delete_account(user_id):
 
         # Put deleted user data in data for rabbitmq publish
         routing_key = 'portal.account.deleted'
-        data = {"TODO": "NOT IMPLEMENTED YET", "id": int(user_id)}  # Get user data, without password
+        data = {"TODO": "NOT IMPLEMENTED YET", "id": int(user_id)}  # TODO Get user data and id, without password
         publish_rabbitmq(routing_key, data)
         return user_schema.jsonify(user)
     else:
