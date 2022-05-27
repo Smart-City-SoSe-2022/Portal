@@ -48,8 +48,18 @@ class UserSchema(ma.Schema):
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
+#  TODO work with cookie and not with user_id
+@app.route('/portal/get', methods=['GET'])
+def get_users():
+    """Return user data"""
 
-@app.route('/create', methods=['POST'])
+    # Should return data from a single user, but not implemented yet
+    all_users = User.query.all()
+
+    return users_schema.jsonify(all_users)
+
+
+@app.route('/portal/create', methods=['POST'])
 def create_account():
     """Creates a user by reading all information from the request as json"""
     forename = request.json['forename']
@@ -70,8 +80,8 @@ def create_account():
 
     return jsonify({"msg": "Account created"})
 
-
-@app.route('/update/<user_id>', methods=['PUT'])
+#  TODO work with cookie and not with user_id
+@app.route('/portal/update/<user_id>', methods=['PUT'])
 def update_account(user_id):
     """Updates user account information"""
     # Update user, if user with user_id exists
@@ -90,8 +100,8 @@ def update_account(user_id):
     else:
         return jsonify({"msg": "Account not found"})
 
-
-@app.route('/delete/<user_id>', methods=['DELETE'])
+#  TODO work with cookie and not with user_id
+@app.route('/portal/delete/<user_id>', methods=['DELETE'])
 def delete_account(user_id):
     """Deletes the user with the given user_id, if the user exists"""
     # Delete user, if user with user_id exists
@@ -107,16 +117,6 @@ def delete_account(user_id):
         return user_schema.jsonify(user)
     else:
         return jsonify({"msg": "Account not found"})
-
-
-@app.route('/get', methods=['GET'])
-def get_users():
-    """Return user data"""
-
-    # Should return data from a single user, but not implemented yet
-    all_users = User.query.all()
-
-    return users_schema.jsonify(all_users)
 
 
 def update_if_request_contains(user_val, request_val):
