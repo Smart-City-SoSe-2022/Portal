@@ -1,173 +1,101 @@
-kind: Deployment
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
 apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: portal-backend
-  namespace: default
-  uid: a31e5d09-0e22-4bdf-9050-e1f4503ec61e
-  creationTimestamp: '2022-05-09T09:53:14Z'
+  annotations:
+    branch: refs/heads/main
+    commit: ccecc2b323abc203af4763134099e12fbe88779a
+    createdBy: lhumke
+    deployTimestamp: "1653758935680"
+    deployment.kubernetes.io/revision: "3"
+    jobName: deploy_backend
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"creationTimestamp":"2022-05-09T09:53:14Z","labels":{"k8s-app":"portal-backend"},"managedFields":[{"apiVersion$
+    provider: GitHub
+    repository: Smart-City-SoSe-2022/Portal
+    run: "2401724205"
+    runUri: https://github.com/Smart-City-SoSe-2022/Portal/actions/runs/2401724205
+    workflow: Docker
+  generation: 7
   labels:
     k8s-app: portal-backend
-  managedFields:
-    - manager: dashboard
-      operation: Update
-      apiVersion: apps/v1
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:spec:
-          f:replicas: {}
-      subresource: scale
-    - manager: kubectl-edit
-      operation: Update
-      apiVersion: apps/v1
-      time: '2022-05-28T17:02:57Z'
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:spec:
-          f:template:
-            f:spec:
-              f:containers:
-                k:{"name":"portal-backend"}:
-                  f:imagePullPolicy: {}
-    - manager: dashboard
-      operation: Update
-      apiVersion: apps/v1
-      time: '2022-05-28T17:11:25Z'
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:metadata:
-          f:labels:
-            .: {}
-            f:k8s-app: {}
-        f:spec:
-          f:progressDeadlineSeconds: {}
-          f:revisionHistoryLimit: {}
-          f:selector: {}
-          f:strategy:
-            f:rollingUpdate:
-              .: {}
-              f:maxSurge: {}
-              f:maxUnavailable: {}
-            f:type: {}
-          f:template:
-            f:metadata:
-              f:labels:
-                .: {}
-                f:k8s-app: {}
-              f:name: {}
-            f:spec:
-              f:containers:
-                k:{"name":"portal-backend"}:
-                  .: {}
-                  f:image: {}
-                  f:name: {}
-                  f:resources: {}
-                  f:securityContext:
-                    .: {}
-                    f:privileged: {}
-                  f:terminationMessagePath: {}
-                  f:terminationMessagePolicy: {}
-              f:dnsPolicy: {}
-              f:imagePullSecrets:
-                .: {}
-                k:{"name":"github-docker-secret"}: {}
-              f:restartPolicy: {}
-              f:schedulerName: {}
-              f:securityContext: {}
-              f:terminationGracePeriodSeconds: {}
-    - manager: kube-controller-manager
-      operation: Update
-      apiVersion: apps/v1
-      time: '2022-05-28T17:11:57Z'
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:metadata:
-          f:annotations:
-            .: {}
-            f:deployment.kubernetes.io/revision: {}
-        f:status:
-          f:availableReplicas: {}
-          f:conditions:
-            .: {}
-            k:{"type":"Available"}:
-              .: {}
-              f:lastTransitionTime: {}
-              f:lastUpdateTime: {}
-              f:message: {}
-              f:reason: {}
-              f:status: {}
-              f:type: {}
-            k:{"type":"Progressing"}:
-              .: {}
-              f:lastTransitionTime: {}
-              f:lastUpdateTime: {}
-              f:message: {}
-              f:reason: {}
-              f:status: {}
-              f:type: {}
-          f:observedGeneration: {}
-          f:readyReplicas: {}
-          f:replicas: {}
-          f:updatedReplicas: {}
-      subresource: status
-    - manager: kubectl-client-side-apply
-      operation: Update
-      apiVersion: apps/v1
-      time: '2022-05-28T17:28:59Z'
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:metadata:
-          f:annotations:
-            f:kubectl.kubernetes.io/last-applied-configuration: {}
-    - manager: kubectl-annotate
-      operation: Update
-      apiVersion: apps/v1
-      time: '2022-05-28T17:29:03Z'
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:metadata:
-          f:annotations:
-            f:branch: {}
-            f:commit: {}
-            f:createdBy: {}
-            f:deployTimestamp: {}
-            f:jobName: {}
-            f:provider: {}
-            f:repository: {}
-            f:run: {}
-            f:runUri: {}
-            f:workflow: {}
+  name: portal-backend
+  namespace: default
 spec:
+  progressDeadlineSeconds: 600
   replicas: 3
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
       k8s-app: portal-backend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
   template:
     metadata:
-      name: portal-backend
       creationTimestamp: null
       labels:
         k8s-app: portal-backend
+name: portal-backend
+  namespace: default
+  resourceVersion: "4711717"
+  uid: a31e5d09-0e22-4bdf-9050-e1f4503ec61e
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: portal-backend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        k8s-app: portal-backend
+      name: portal-backend
     spec:
       containers:
-        - name: portal-backend
-          image: ghcr.io/smart-city-sose-2022/portal-backend:main
-          resources: {}
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-          imagePullPolicy: Always
-          securityContext:
-            privileged: false
-      restartPolicy: Always
-      terminationGracePeriodSeconds: 30
+      - image: ghcr.io/smart-city-sose-2022/portal-backend:main
+        imagePullPolicy: Always
+        name: portal-backend
+        resources: {}
+        securityContext:
+          privileged: false
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
-      securityContext: {}
       imagePullSecrets:
-        - name: github-docker-secret
+      - name: github-docker-secret
+      restartPolicy: Always
       schedulerName: default-scheduler
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 25%
-      maxSurge: 25%
-  revisionHistoryLimit: 10
-  progressDeadlineSeconds: 600
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 3
+  conditions:
+  - lastTransitionTime: "2022-05-09T10:34:48Z"
+    lastUpdateTime: "2022-05-09T10:34:48Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2022-05-09T09:53:14Z"
+    lastUpdateTime: "2022-05-28T17:11:57Z"
+    message: ReplicaSet "portal-backend-6dd5999646" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 7
+  readyReplicas: 3
+  replicas: 3
+  updatedReplicas: 3
