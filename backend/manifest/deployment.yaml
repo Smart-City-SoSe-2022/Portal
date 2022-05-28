@@ -41,27 +41,6 @@ spec:
       creationTimestamp: null
       labels:
         k8s-app: portal-backend
-name: portal-backend
-  namespace: default
-  resourceVersion: "4711717"
-  uid: a31e5d09-0e22-4bdf-9050-e1f4503ec61e
-spec:
-  progressDeadlineSeconds: 600
-  replicas: 3
-  revisionHistoryLimit: 10
-  selector:
-    matchLabels:
-      k8s-app: portal-backend
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
-  template:
-    metadata:
-      creationTimestamp: null
-      labels:
-        k8s-app: portal-backend
       name: portal-backend
     spec:
       containers:

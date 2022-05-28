@@ -19,14 +19,11 @@ metadata:
     run: "2401734445"
     runUri: https://github.com/Smart-City-SoSe-2022/Portal/actions/runs/2401734445
     workflow: Docker
-  creationTimestamp: "2022-05-09T09:39:51Z"
   generation: 6
   labels:
     k8s-app: portal-frontend
   name: portal-frontend
   namespace: default
-  resourceVersion: "4711839"
-  uid: 30caf9c3-3351-4a43-a6a2-189c08c9a2ed
 spec:
   progressDeadlineSeconds: 600
   replicas: 3
@@ -44,6 +41,7 @@ spec:
       creationTimestamp: null
       labels:
         k8s-app: portal-frontend
+      name: portal-frontend
   spec:
       containers:
       - image: ghcr.io/smart-city-sose-2022/portal-frontend:main
