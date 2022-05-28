@@ -71,8 +71,8 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ${{ steps.meta.outputs.tags }}
-            ghcr.io/smart-city-sose-2022/${{ env.REGISTRY }}/${{ env.BACKEND_NAME }}:latest
-            ghcr.io/smart-city-sose-2022/${{ env.REGISTRY }}/${{ env.BACKEND_NAME }}:${{ github.sha }}
+            ghcr.io/smart-city-sose-2022/${{ env.REGISTRY }}/${{ env.FRONTEND_NAME }}:latest
+            ghcr.io/smart-city-sose-2022/${{ env.REGISTRY }}/${{ env.FRONTEND_NAME }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
         
@@ -122,8 +122,8 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ${{ steps.meta.outputs.tags }}
-            ghcr.io/smart-city-sose-2022/${{ env.REGISTRY }}/${{ env.BACKEND_NAME }}:latest
-            ghcr.io/smart-city-sose-2022/${{ env.REGISTRY }}/${{ env.BACKEND_NAME }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.BACKEND_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.BACKEND_NAME }}:${{ github.sha }}
             
           labels: ${{ steps.meta.outputs.labels }}
           
@@ -151,7 +151,7 @@ jobs:
             backend/manifest/deployment.yaml
             backend/manifest/service.yaml
           images: |
-            ghcr.io/smart-city-sose-2022/${{ env.REGISTRY }}/${{ env.BACKEND_NAME }}:main
+            ${{ env.REGISTRY }}/${{ env.BACKEND_NAME }}:${{ github.sha }}
             
   deploy_frontend:
     name: Deploy Frontend
@@ -177,6 +177,6 @@ jobs:
             frontend/manifest/deployment.yaml
             frontend/manifest/service.yaml
           images: |
-            ghcr.io/smart-city-sose-2022/${{ env.REGISTRY }}/${{ env.FRONTEND_NAME }}:main
+            ${{ env.REGISTRY }}/${{ env.FRONTEND_NAME }}:${{ github.sha }}
 
 
