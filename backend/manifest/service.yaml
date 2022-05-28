@@ -1,0 +1,53 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: portal-backend
+  namespace: default
+  uid: acdec7c2-36b7-4cbb-94da-e99df39848db
+  resourceVersion: '2700894'
+  creationTimestamp: '2022-05-09T09:53:14Z'
+  labels:
+    k8s-app: portal-backend
+  managedFields:
+    - manager: dashboard
+      operation: Update
+      apiVersion: v1
+      time: '2022-05-09T09:53:14Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:labels:
+            .: {}
+            f:k8s-app: {}
+        f:spec:
+          f:internalTrafficPolicy: {}
+          f:ports:
+            .: {}
+            k:{"port":9001,"protocol":"TCP"}:
+              .: {}
+              f:name: {}
+              f:port: {}
+              f:protocol: {}
+              f:targetPort: {}
+          f:selector: {}
+          f:sessionAffinity: {}
+          f:type: {}
+spec:
+  ports:
+    - name: tcp-9001-5000-8hx9p
+      protocol: TCP
+      port: 9001
+      targetPort: 5000
+  selector:
+    k8s-app: portal-backend
+  clusterIP: 10.109.232.129
+  clusterIPs:
+    - 10.109.232.129
+  type: ClusterIP
+  sessionAffinity: None
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  internalTrafficPolicy: Cluster
+status:
+  loadBalancer: {}
