@@ -76,7 +76,7 @@ jobs:
   build_backend:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: readhttps://217.160.47.130:6443
       packages: write
       # This is used to complete the identity challenge
       # with sigstore/fulcio when running outside of PRs.
@@ -119,4 +119,51 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          
+  deploy_backend:
+    name: Deploy Backend
+    if: github.ref == 'refs/heads/master'
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set the Kubernetes context
+        uses: azure/k8s-set-context@v2
+        with:
+          method: service-account
+          k8s-url: https://217.160.47.130:6443
+          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
+
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Deploy to the Kubernetes cluster
+        uses: azure/k8s-deploy@v1
+        with:
+          namespace: default
+          images: |
+            ghcr.io/smart-city-sose-2022/${{ env.REGISTRY }}/${{ env.BACKEND_NAME }}:main
+            
+  deploy_frontend:
+    name: Deploy Frontend
+    if: github.ref == 'refs/heads/master'
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set the Kubernetes context
+        uses: azure/k8s-set-context@v2
+        with:
+          method: service-account
+          k8s-url: https://217.160.47.130:6443
+          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
+
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Deploy to the Kubernetes cluster
+        uses: azure/k8s-deploy@v1
+        with:
+          namespace: default
+          images: |
+            ghcr.io/smart-city-sose-2022/${{ env.REGISTRY }}/${{ env.FRONTEND_NAME }}:main
+
 
