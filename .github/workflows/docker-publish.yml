@@ -20,8 +20,8 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   REPOSITORY: smart-city-sose-2022/portal
-  FRONTEND_NAME: ${{ REPOSITORY }}-frontend
-  BACKEND_NAME: ${{ REPOSITORY }}-backend
+  FRONTEND_NAME: smart-city-sose-2022/portal-frontend
+  BACKEND_NAME: smart-city-sose-2022/portal-backend
 
 
 jobs:
