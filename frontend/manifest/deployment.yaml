@@ -1,135 +1,82 @@
-kind: Deployment
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
 apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: portal-frontend
-  namespace: default
-  uid: 30caf9c3-3351-4a43-a6a2-189c08c9a2ed
-  creationTimestamp: '2022-05-09T09:39:51Z'
+  annotations:
+    branch: refs/heads/main
+    commit: 156ad1989c65bccf6e6cffbc9014bedb18870ebc
+    createdBy: lhumke
+    deployTimestamp: "1653759332029"
+    deployment.kubernetes.io/revision: "2"
+    jobName: deploy_frontend
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"creationTimestamp":"2022-05-09T09:39:51Z","labels":{"k8s-app":"portal-frontend"},"managedFields":[{"apiVersio$
+    provider: GitHub
+    repository: Smart-City-SoSe-2022/Portal
+    run: "2401734445"
+    runUri: https://github.com/Smart-City-SoSe-2022/Portal/actions/runs/2401734445
+    workflow: Docker
+  creationTimestamp: "2022-05-09T09:39:51Z"
+  generation: 6
   labels:
     k8s-app: portal-frontend
-  managedFields:
-    - manager: dashboard
-      operation: Update
-      apiVersion: apps/v1
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:spec:
-          f:replicas: {}
-      subresource: scale
-    - manager: dashboard
-      operation: Update
-      apiVersion: apps/v1
-      time: '2022-05-09T09:39:51Z'
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:metadata:
-          f:labels:
-            .: {}
-            f:k8s-app: {}
-        f:spec:
-          f:progressDeadlineSeconds: {}
-          f:revisionHistoryLimit: {}
-          f:selector: {}
-          f:strategy:
-            f:rollingUpdate:
-              .: {}
-              f:maxSurge: {}
-              f:maxUnavailable: {}
-            f:type: {}
-          f:template:
-            f:metadata:
-              f:labels:
-                .: {}
-                f:k8s-app: {}
-              f:name: {}
-            f:spec:
-              f:containers:
-                k:{"name":"portal-frontend"}:
-                  .: {}
-                  f:image: {}
-                  f:imagePullPolicy: {}
-                  f:name: {}
-                  f:resources: {}
-                  f:securityContext:
-                    .: {}
-                    f:privileged: {}
-                  f:terminationMessagePath: {}
-                  f:terminationMessagePolicy: {}
-              f:dnsPolicy: {}
-              f:imagePullSecrets:
-                .: {}
-                k:{"name":"github-docker-secret"}: {}
-              f:restartPolicy: {}
-              f:schedulerName: {}
-              f:securityContext: {}
-              f:terminationGracePeriodSeconds: {}
-    - manager: kube-controller-manager
-      operation: Update
-      apiVersion: apps/v1
-      time: '2022-05-09T10:34:46Z'
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:metadata:
-          f:annotations:
-            .: {}
-            f:deployment.kubernetes.io/revision: {}
-        f:status:
-          f:availableReplicas: {}
-          f:conditions:
-            .: {}
-            k:{"type":"Available"}:
-              .: {}
-              f:lastTransitionTime: {}
-              f:lastUpdateTime: {}
-              f:message: {}
-              f:reason: {}
-              f:status: {}
-              f:type: {}
-            k:{"type":"Progressing"}:
-              .: {}
-              f:lastTransitionTime: {}
-              f:lastUpdateTime: {}
-              f:message: {}
-              f:reason: {}
-              f:status: {}
-              f:type: {}
-          f:observedGeneration: {}
-          f:readyReplicas: {}
-          f:replicas: {}
-          f:updatedReplicas: {}
-      subresource: status
+  name: portal-frontend
+  namespace: default
+  resourceVersion: "4711839"
+  uid: 30caf9c3-3351-4a43-a6a2-189c08c9a2ed
 spec:
+  progressDeadlineSeconds: 600
   replicas: 3
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
       k8s-app: portal-frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
   template:
     metadata:
-      name: portal-frontend
       creationTimestamp: null
       labels:
         k8s-app: portal-frontend
-    spec:
+  spec:
       containers:
-        - name: portal-frontend
-          image: ghcr.io/smart-city-sose-2022/portal-frontend:main
-          resources: {}
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-          imagePullPolicy: IfNotPresent
-          securityContext:
-            privileged: false
-      restartPolicy: Always
-      terminationGracePeriodSeconds: 30
+      - image: ghcr.io/smart-city-sose-2022/portal-frontend:main
+        imagePullPolicy: IfNotPresent
+        name: portal-frontend
+        resources: {}
+        securityContext:
+          privileged: false
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
-      securityContext: {}
       imagePullSecrets:
-        - name: github-docker-secret
+      - name: github-docker-secret
+      restartPolicy: Always
       schedulerName: default-scheduler
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 25%
-      maxSurge: 25%
-  revisionHistoryLimit: 10
-  progressDeadlineSeconds: 600
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 3
+  conditions:
+  - lastTransitionTime: "2022-05-09T09:39:51Z"
+    lastUpdateTime: "2022-05-09T09:48:59Z"
+    message: ReplicaSet "portal-frontend-84b7569566" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: "2022-05-09T10:34:46Z"
+    lastUpdateTime: "2022-05-09T10:34:46Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  observedGeneration: 6
+  readyReplicas: 3
+  replicas: 3
+  updatedReplicas: 3
