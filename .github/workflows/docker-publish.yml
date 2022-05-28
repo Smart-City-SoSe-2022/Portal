@@ -122,8 +122,8 @@ jobs:
           
   deploy_backend:
     name: Deploy Backend
-    if: github.ref == 'refs/heads/master'
-    needs: [ build ]
+    #if: github.ref == 'refs/heads/master'
+    needs: [ build_backend ]
     runs-on: ubuntu-latest
     steps:
       - name: Set the Kubernetes context
