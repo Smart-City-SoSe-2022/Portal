@@ -131,6 +131,9 @@ jobs:
         with:
           method: service-account
           k8s-url: https://217.160.47.130:6443
+          manifests: |
+            backend/manifest/deployment.yaml
+            backend/manifest/service.yaml
           k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
 
       - name: Checkout source code
@@ -145,7 +148,7 @@ jobs:
             
   deploy_frontend:
     name: Deploy Frontend
-    if: github.ref == 'refs/heads/master'
+    #if: github.ref == 'refs/heads/master'
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:
@@ -154,6 +157,9 @@ jobs:
         with:
           method: service-account
           k8s-url: https://217.160.47.130:6443
+          manifests: |
+            frontend/manifest/deployment.yaml
+            frontend/manifest/service.yaml
           k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
 
       - name: Checkout source code
