@@ -72,7 +72,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ${{ steps.meta.outputs.tags }}
-            {{ env.REGISTRY }}/${{ env.FRONTEND_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.FRONTEND_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.FRONTEND_NAME }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
