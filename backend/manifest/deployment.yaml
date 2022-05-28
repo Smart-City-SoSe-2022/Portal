@@ -4,13 +4,9 @@ metadata:
   name: portal-backend
   namespace: default
   uid: a31e5d09-0e22-4bdf-9050-e1f4503ec61e
-  resourceVersion: '4707502'
-  generation: 4
   creationTimestamp: '2022-05-09T09:53:14Z'
   labels:
     k8s-app: portal-backend
-  annotations:
-    deployment.kubernetes.io/revision: '3'
   managedFields:
     - manager: dashboard
       operation: Update
@@ -113,6 +109,33 @@ metadata:
           f:replicas: {}
           f:updatedReplicas: {}
       subresource: status
+    - manager: kubectl-client-side-apply
+      operation: Update
+      apiVersion: apps/v1
+      time: '2022-05-28T17:28:59Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            f:kubectl.kubernetes.io/last-applied-configuration: {}
+    - manager: kubectl-annotate
+      operation: Update
+      apiVersion: apps/v1
+      time: '2022-05-28T17:29:03Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            f:branch: {}
+            f:commit: {}
+            f:createdBy: {}
+            f:deployTimestamp: {}
+            f:jobName: {}
+            f:provider: {}
+            f:repository: {}
+            f:run: {}
+            f:runUri: {}
+            f:workflow: {}
 spec:
   replicas: 3
   selector:
@@ -148,22 +171,3 @@ spec:
       maxSurge: 25%
   revisionHistoryLimit: 10
   progressDeadlineSeconds: 600
-status:
-  observedGeneration: 4
-  replicas: 3
-  updatedReplicas: 3
-  readyReplicas: 3
-  availableReplicas: 3
-  conditions:
-    - type: Available
-      status: 'True'
-      lastUpdateTime: '2022-05-09T10:34:48Z'
-      lastTransitionTime: '2022-05-09T10:34:48Z'
-      reason: MinimumReplicasAvailable
-      message: Deployment has minimum availability.
-    - type: Progressing
-      status: 'True'
-      lastUpdateTime: '2022-05-28T17:11:57Z'
-      lastTransitionTime: '2022-05-09T09:53:14Z'
-      reason: NewReplicaSetAvailable
-      message: ReplicaSet "portal-backend-6dd5999646" has successfully progressed.
