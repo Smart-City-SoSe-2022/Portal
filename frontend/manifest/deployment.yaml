@@ -42,7 +42,7 @@ spec:
       labels:
         k8s-app: portal-frontend
       name: portal-frontend
-  spec:
+    spec:
       containers:
       - image: ghcr.io/smart-city-sose-2022/portal-frontend:main
         imagePullPolicy: IfNotPresent

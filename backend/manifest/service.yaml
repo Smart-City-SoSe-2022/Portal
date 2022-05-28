@@ -3,9 +3,6 @@ apiVersion: v1
 metadata:
   name: portal-backend
   namespace: default
-  uid: acdec7c2-36b7-4cbb-94da-e99df39848db
-  resourceVersion: '2700894'
-  creationTimestamp: '2022-05-09T09:53:14Z'
   labels:
     k8s-app: portal-backend
   managedFields:
