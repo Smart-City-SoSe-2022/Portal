@@ -1,16 +1,47 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="This is a test for CI/CD"/>
+  <nav class="navbar navbar-light navbar-expand bg-light navigation-clean">
+    <div class="container">
+      <router-link class="navbar-brand" to="/">Smart City</router-link>
+      <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navcol-1"></button>
+      <div id="navcol-1" class="collapse navbar-collapse" style="transform: perspective(2220px);">
+        <router-link class="btn btn-primary ms-auto" role="button" to="/create">Registrieren</router-link>
+        <router-link class="btn btn-primary" role="button" to="/login">Anmelden</router-link>
+      </div>
+    </div>
+  </nav>
+  <router-view/>
+  <footer class="bg-light footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 text-center text-lg-start my-auto h-100">
+          <ul class="list-inline mb-2">
+            <li class="list-inline-item"><a href="#">About</a></li>
+            <li class="list-inline-item"><span>⋅</span></li>
+            <li class="list-inline-item"><a href="#">Contact</a></li>
+            <li class="list-inline-item"><span>⋅</span></li>
+            <li class="list-inline-item"><a href="#">Terms of Use</a></li>
+            <li class="list-inline-item"><span>⋅</span></li>
+            <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
+          </ul>
+          <p class="text-muted small mb-4 mb-lg-0">© Smart City 2022. All Rights Reserved.</p>
+        </div>
+        <div class="col-lg-6 text-center text-lg-end my-auto h-100">
+          <ul class="list-inline mb-0">
+            <li class="list-inline-item"><a href="#"><i class="fa fa-facebook fa-2x fa-fw"></i></a></li>
+            <li class="list-inline-item"><a href="#"><i class="fa fa-twitter fa-2x fa-fw"></i></a></li>
+            <li class="list-inline-item"><a href="#"><i class="fa fa-instagram fa-2x fa-fw"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  }
+  components: {}
 }
 </script>
 
