@@ -56,7 +56,8 @@ spec:
         volumeMounts:
           - name: env
             readOnly: true
-            mountPath: /app
+            mountPath: /app/.env
+            subPath: .env
         resources: {}
         securityContext:
           privileged: false
