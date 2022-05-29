@@ -12,7 +12,6 @@ marshmallow==3.15.0
 marshmallow-sqlalchemy==0.28.0
 packaging==21.3
 pika==1.2.1
-pika-stubs
 pip==22.1.1
 psycopg2-binary==2.9.3
 pyparsing==3.0.8
