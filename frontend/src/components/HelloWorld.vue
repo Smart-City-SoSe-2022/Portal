@@ -59,7 +59,7 @@ export default {
         redirect: 'follow'
       };
 
-      fetch("http://10.109.232.129:9001/portal", requestOptions)
+      fetch("http://server.it-humke.de:9001/portal", requestOptions)
           .then(response => response.text())
           .then(result => console.log(result))
           .catch(error => console.log('error', error));

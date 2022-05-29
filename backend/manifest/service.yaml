@@ -40,7 +40,9 @@ spec:
   clusterIP: 10.109.232.129
   clusterIPs:
     - 10.109.232.129
-  type: ClusterIP
+  type: LoadBalancer
+  externalIPs:
+    - 217.160.47.130
   sessionAffinity: None
   ipFamilies:
     - IPv4
