@@ -65,7 +65,7 @@ export default {
           redirect: 'follow'
         };
 
-        fetch("http://localhost:5000/message", requestOptions)
+        fetch("http://localhost:5000/portal/message", requestOptions)
             .then(response => response.text())
             .then(result => console.log(result))
             .then(() => this.$router.push({
