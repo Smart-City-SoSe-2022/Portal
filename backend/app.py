@@ -135,7 +135,7 @@ def update_if_request_contains(user_val, request_val):
 def publish_rabbitmq(routing_key, data):
     """Publish a message given with data on the given routing key"""
     message = json.dumps(data)
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='10.104.41.215'))
     channel = connection.channel()
     channel.exchange_declare(exchange='microservice.eventbus', exchange_type='topic')
     channel.basic_publish(
