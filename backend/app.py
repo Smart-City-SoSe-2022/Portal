@@ -30,7 +30,8 @@ def login():
     user = User.query.filter_by(email=auth.username).first()
 
     if user and check_password_hash(user.password, auth.password):
-        data = {'sub': user.id, 'name': user.fullname(), 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}
+        data = {'sub': user.id, 'name': user.fullname(),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}
         token = jwt.encode(data, app.config['SECRET_KEY'], algorithm="HS256")
 
         return jsonify({'token': token}), 200
@@ -52,6 +53,8 @@ def token_required(f):
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             current_user = User.query.get(data['sub'])
+            if current_user is None:
+                return jsonify({"msg": "Token ist ungültig!"}), 401
         except:
             return jsonify({"msg": "Token ist ungültig!"}), 401
 
@@ -173,23 +176,18 @@ def update_account(user):
     return {}, 204
 
 
-#  TODO work with cookie and not with user_id
-@app.route('/portal/delete/<user_id>', methods=['DELETE'])
-def delete_account(user_id):
-    """Deletes the user with the given user_id, if the user exists"""
-    # Delete user, if user with user_id exists
-    user = User.query.get(int(user_id))
-    if user is not None:
-        db.session.delete(user)
-        db.session.commit()
+@app.route('/portal/delete', methods=['DELETE'])
+@token_required
+def delete_account(user):
+    """Deletes the user"""
+    db.session.delete(user)
+    db.session.commit()
 
-        # Put deleted user data in data for rabbitmq publish
-        routing_key = 'portal.account.deleted'
-        data = {"TODO": "NOT IMPLEMENTED YET", "id": int(user_id)}  # TODO Get user data and id, without password
-        publish_rabbitmq(routing_key, data)
-        return {}, 204
-    else:
-        return jsonify({"msg": "Account not found"})
+    # Put deleted user data in data for rabbitmq publish
+    routing_key = 'portal.account.deleted'
+    data = {"TODO": "NOT IMPLEMENTED YET", "id": int(user.id)}  # TODO Get user data and id, without password
+    publish_rabbitmq(routing_key, data)
+    return {}, 204
 
 
 def update_if_request_contains(user_val, request_val):
@@ -207,6 +205,7 @@ def update_if_request_contains_password(user_pass, request_pass):
         new_val = hashed_password
 
     return new_val
+
 
 def publish_rabbitmq(routing_key, data):
     """Publish a message given with data on the given routing key"""
