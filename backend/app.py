@@ -30,13 +30,12 @@ def login():
     user = User.query.filter_by(email=auth.username).first()
 
     if user and check_password_hash(user.password, auth.password):
-        data = {'sub': user.id, 'name': user.fullname(),
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30), 'address': user.address, 'email': user.email}
+        data = {'sub': user.id, 'name': user.fullname(), 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}
         token = jwt.encode(data, app.config['SECRET_KEY'], algorithm="HS256")
 
         return jsonify({'token': token}), 200
 
-    return jsonify({"msg": "Incorrect login"})
+    return jsonify({"msg": "Falsche Logindaten!"})
 
 
 def token_required(f):
@@ -48,13 +47,13 @@ def token_required(f):
             token = request.headers['x-access-token']
 
         if not token:
-            return jsonify({"msg": "Token is missing!"}), 401
+            return jsonify({"msg": "Token fehlt!"}), 401
 
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-            current_user = User.query.filter_by(email=data['email']).first()
+            current_user = User.query.get(data['sub'])
         except:
-            return jsonify({"msg": "Token is invalid"}), 401
+            return jsonify({"msg": "Token ist ungültig!"}), 401
 
         return f(current_user, *args, **kwargs)
 
@@ -72,6 +71,7 @@ def protected(user):
     print(user.fullname())
 
     return jsonify({"msg": "You are logged in because you can see this!"})
+
 
 # TUTORIAL
 
@@ -145,33 +145,33 @@ def create_account():
 
     return jsonify({"msg": "Account wurde erstellt."}), 201
 
-#  TODO work with cookie and not with user_id
-@app.route('/portal/update/<user_id>', methods=['PUT'])
-def update_account(user_id):
+
+@app.route('/portal/update', methods=['PUT'])
+@token_required
+def update_account(user):
     """Updates user account information"""
-    # Update user, if user with user_id exists
-    user = User.query.get(int(user_id))
-    if user is not None:
-        data = request.get_json()
+    data = request.get_json()
 
-        user.forename = update_if_request_contains(user.forename, data.get('forename'))
-        user.lastname = update_if_request_contains(user.lastname, data.get('lastname'))
-        user.gender = update_if_request_contains(user.gender, data.get('gender'))
-        user.address = update_if_request_contains(user.address, data.get('address'))
-        user.plz = update_if_request_contains(user.plz, data.get('plz'))
-        user.email = update_if_request_contains(user.email, data.get('email'))
-        # TODO password also hashed!
-        user.password = update_if_request_contains(user.password, data.get('password'))
+    email = data.get('email')
+    if User.query.filter_by(email=email).first():
+        return jsonify({"msg": "Email ist bereits vergeben!"}), 200
 
-        db.session.commit()
+    user.forename = update_if_request_contains(user.forename, data.get('forename'))
+    user.lastname = update_if_request_contains(user.lastname, data.get('lastname'))
+    user.gender = update_if_request_contains(user.gender, data.get('gender'))
+    user.address = update_if_request_contains(user.address, data.get('address'))
+    user.plz = update_if_request_contains(user.plz, data.get('plz'))
+    user.email = update_if_request_contains(user.email, data.get('email'))
+    user.password = update_if_request_contains_password(user.password, data.get('password'))
 
-        routing_key = 'portal.account.updated'
-        data = {"id": user.id}
-        publish_rabbitmq(routing_key, data)
+    db.session.commit()
 
-        return {}, 204
-    else:
-        return jsonify({"msg": "Account not found"})
+    routing_key = 'portal.account.updated'
+    data = {"id": user.id}
+    publish_rabbitmq(routing_key, data)
+
+    return {}, 204
+
 
 #  TODO work with cookie and not with user_id
 @app.route('/portal/delete/<user_id>', methods=['DELETE'])
@@ -199,6 +199,14 @@ def update_if_request_contains(user_val, request_val):
 
     return new_val
 
+
+def update_if_request_contains_password(user_pass, request_pass):
+    new_val = user_pass
+    if request_pass is not None:
+        hashed_password = generate_password_hash(request_pass, method='sha256')
+        new_val = hashed_password
+
+    return new_val
 
 def publish_rabbitmq(routing_key, data):
     """Publish a message given with data on the given routing key"""
