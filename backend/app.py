@@ -22,7 +22,68 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 
-# TUTORIAL
+class User(db.Model):
+    """User Model"""
+    id = db.Column(db.Integer, primary_key=True)
+    forename = db.Column(db.String(50), nullable=False)
+    lastname = db.Column(db.String(50), nullable=False)
+    gender = db.Column(db.String(50), nullable=True)
+    address = db.Column(db.String(50), nullable=False)
+    plz = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    creation_date = db.Column(db.DateTime, default=datetime.datetime.now())
+
+    def __init__(self, forename, lastname, gender, address, plz, email, password):
+        self.forename = forename
+        self.lastname = lastname
+        self.gender = gender
+        self.address = address
+        self.plz = plz
+        self.email = email
+        self.password = password
+
+    def fullname(self):
+        return self.forename + " " + self.lastname
+
+
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'forename', 'lastname', 'gender', 'address', 'plz', 'email')
+
+
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
+
+
+@app.route('/portal/create', methods=['POST'])
+def create_account():
+    """Creates a user by reading all information from the request as json"""
+    data = request.get_json()
+
+    email = data['email']
+    if User.query.filter_by(email=email).first():
+        return jsonify({"msg": "Email ist bereits vergeben!"}), 200
+
+    forename = data['forename']
+    lastname = data['lastname']
+    gender = data.get('gender')  # data.get() because this way, if value is null, there is no exception and gender NULL
+    address = data['address']
+    plz = data['plz']
+    password = data['password']
+
+    hashed_password = generate_password_hash(password, method='sha256')
+
+    user = User(forename, lastname, gender, address, plz, email, hashed_password)
+    db.session.add(user)
+    db.session.commit()
+
+    routing_key = 'portal.account.created'
+    data = {"id": user.id}
+    publish_rabbitmq(routing_key, data)
+
+    return jsonify({"msg": "Account wurde erstellt."}), 201
+
 
 @app.route('/portal/login')
 def login():
@@ -63,90 +124,11 @@ def token_required(f):
     return decorated
 
 
-@app.route("/unprotected")
-def unprotected():
-    return jsonify({"msg": "Anyone can view this!"})
-
-
-@app.route("/protected")
-@token_required
-def protected(user):
-    print(user.fullname())
-
-    return jsonify({"msg": "You are logged in because you can see this!"})
-
-
-# TUTORIAL
-
-
-class User(db.Model):
-    """User Model"""
-    id = db.Column(db.Integer, primary_key=True)
-    forename = db.Column(db.String(50), nullable=False)
-    lastname = db.Column(db.String(50), nullable=False)
-    gender = db.Column(db.String(50), nullable=True)
-    address = db.Column(db.String(50), nullable=False)
-    plz = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(100), nullable=False)
-    creation_date = db.Column(db.DateTime, default=datetime.datetime.now())
-
-    def __init__(self, forename, lastname, gender, address, plz, email, password):
-        self.forename = forename
-        self.lastname = lastname
-        self.gender = gender
-        self.address = address
-        self.plz = plz
-        self.email = email
-        self.password = password
-
-    def fullname(self):
-        return self.forename + " " + self.lastname
-
-
-class UserSchema(ma.Schema):
-    class Meta:
-        fields = ('id', 'forename', 'lastname', 'gender', 'address', 'plz', 'email')
-
-
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
-
-
 @app.route('/portal/get', methods=['GET'])
 @token_required
 def get_user(user):
     """Return user data"""
     return user_schema.jsonify(user), 200
-
-
-@app.route('/portal/create', methods=['POST'])
-def create_account():
-    """Creates a user by reading all information from the request as json"""
-    data = request.get_json()
-
-    email = data['email']
-    if User.query.filter_by(email=email).first():
-        return jsonify({"msg": "Email ist bereits vergeben!"}), 200
-
-    forename = data['forename']
-    lastname = data['lastname']
-    gender = data.get('gender')  # data.get() because this way, if value is null, there is no exception and gender NULL
-    address = data['address']
-    plz = data['plz']
-    password = data['password']
-
-    hashed_password = generate_password_hash(password, method='sha256')
-
-    user = User(forename, lastname, gender, address, plz, email, hashed_password)
-    db.session.add(user)
-    db.session.commit()
-
-    routing_key = 'portal.account.created'
-    data = {"id": user.id}
-    publish_rabbitmq(routing_key, data)
-
-    return jsonify({"msg": "Account wurde erstellt."}), 201
 
 
 @app.route('/portal/update', methods=['PUT'])
