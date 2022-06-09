@@ -1,11 +1,14 @@
 import json.encoder
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response
 from flask_sqlalchemy import SQLAlchemy
 import datetime
+import jwt
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 import pika
 from dotenv import dotenv_values
+from functools import wraps
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 CORS(app)
@@ -13,9 +16,64 @@ CORS(app)
 config = dotenv_values(".env")
 app.config['SQLALCHEMY_DATABASE_URI'] = config["DB_FULL_URI"]
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = config["JWT_SECRET_KEY"]
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+
+
+# TUTORIAL
+
+@app.route('/portal/login')
+def login():
+    auth = request.authorization
+    user = User.query.filter_by(email=auth.username).first()
+
+    if user and check_password_hash(user.password, auth.password):
+        data = {'sub': user.id, 'name': user.fullname(),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30), 'address': user.address, 'email': user.email}
+        token = jwt.encode(data, app.config['SECRET_KEY'], algorithm="HS256")
+
+        return make_response(jsonify({'token': token}), 201)
+
+    return jsonify({"msg": "Incorrect login"})
+
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+
+        if 'x-access-token' in request.headers:
+            token = request.headers['x-access-token']
+
+        if not token:
+            return jsonify({"msg": "Token is missing!"}), 403
+
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            current_user = User.query.filter_by(email=data['email']).first()
+        except:
+            return jsonify({"msg": "Token is invalid"}), 403
+
+        return f(current_user, *args, **kwargs)
+
+    return decorated
+
+
+@app.route("/unprotected")
+def unprotected():
+    return jsonify({"msg": "Anyone can view this!"})
+
+
+@app.route("/protected")
+@token_required
+def protected(user):
+    print(user.fullname())
+
+    return jsonify({"msg": "You are logged in because you can see this!"})
+
+# TUTORIAL
 
 
 class User(db.Model):
@@ -23,11 +81,11 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     forename = db.Column(db.String(50), nullable=False)
     lastname = db.Column(db.String(50), nullable=False)
-    gender = db.Column(db.String(50))
+    gender = db.Column(db.String(50), nullable=True)
     address = db.Column(db.String(50), nullable=False)
     plz = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(100), nullable=False)
     creation_date = db.Column(db.DateTime, default=datetime.datetime.now())
 
     def __init__(self, forename, lastname, gender, address, plz, email, password):
@@ -38,6 +96,9 @@ class User(db.Model):
         self.plz = plz
         self.email = email
         self.password = password
+
+    def fullname(self):
+        return self.forename + " " + self.lastname
 
 
 class UserSchema(ma.Schema):
@@ -50,27 +111,29 @@ users_schema = UserSchema(many=True)
 
 #  TODO work with cookie and not with user_id
 @app.route('/portal/get', methods=['GET'])
-def get_users():
+@token_required
+def get_user(user):
     """Return user data"""
 
-    # Should return data from a single user, but not implemented yet
-    all_users = User.query.all()
-
-    return users_schema.jsonify(all_users)
+    return user_schema.jsonify(user)
 
 
 @app.route('/portal/create', methods=['POST'])
 def create_account():
     """Creates a user by reading all information from the request as json"""
+    # TODO make this cleaner! with data = request.get_json()
     forename = request.json['forename']
     lastname = request.json['lastname']
     gender = request.json.get('gender')  # json.get() because this way, if value is null, there is no exception
     address = request.json['address']
     plz = request.json['plz']
+    # TODO no duplicate email in db!
     email = request.json['email']
     password = request.json['password']
 
-    user = User(forename, lastname, gender, address, plz, email, password)
+    hashed_password = generate_password_hash(password, method='sha256')
+
+    user = User(forename, lastname, gender, address, plz, email, hashed_password)
     db.session.add(user)
     db.session.commit()
 
@@ -93,6 +156,7 @@ def update_account(user_id):
         user.address = update_if_request_contains(user.address, request.json.get('address'))
         user.plz = update_if_request_contains(user.plz, request.json.get('plz'))
         user.email = update_if_request_contains(user.email, request.json.get('email'))
+        # TODO password also hashed!
         user.password = update_if_request_contains(user.password, request.json.get('password'))
 
         db.session.commit()
