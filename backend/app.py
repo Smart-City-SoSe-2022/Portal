@@ -85,7 +85,7 @@ def create_account():
     return jsonify({"msg": "Account wurde erstellt."}), 201
 
 
-@app.route('/portal/login')
+@app.route('/portal/login', methods=['GET'])
 def login():
     auth = request.authorization
     user = User.query.filter_by(email=auth.username).first()
