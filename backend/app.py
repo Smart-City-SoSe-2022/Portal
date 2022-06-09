@@ -179,13 +179,13 @@ def update_account(user):
 @app.route('/portal/delete', methods=['DELETE'])
 @token_required
 def delete_account(user):
-    """Deletes the user"""
+    """Deletes the user and publishes its data to RabbitMQ"""
     db.session.delete(user)
     db.session.commit()
 
     # Put deleted user data in data for rabbitmq publish
     routing_key = 'portal.account.deleted'
-    data = {"TODO": "NOT IMPLEMENTED YET", "id": int(user.id)}  # TODO Get user data and id, without password
+    data = user_schema.jsonify(user).get_json()
     publish_rabbitmq(routing_key, data)
     return {}, 204
 
