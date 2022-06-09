@@ -61,11 +61,14 @@ export default {
       };
 
       fetch("http://localhost:5000/portal/login", requestOptions)
-          .then(response => response.text())
-          .then(result => console.log(result))
+          .then(response => response.json())
+          .then(result => {
+            console.log(result)
+            localStorage.setItem('token', result["token"])
+          })
           .then(() => this.$router.push({
-            name: "landingPage"
-          }))
+              name: "accountDetails"
+            }))
           .catch(error => console.log('error', error));
     }
   }

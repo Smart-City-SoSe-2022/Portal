@@ -1,19 +1,14 @@
 import {createRouter, createWebHistory} from "vue-router";
-import MessageSend from "@/components/MessageSend";
 import CreateAccount from "@/components/CreateAccount";
 import LandingPage from "@/components/LandingPage";
 import LoginPage from "@/components/LoginPage";
+import accountDetails from "@/components/AccountDetails";
 
 const routes = [
     {
         path: '/',
         name: 'landingPage',
         component: LandingPage
-    },
-    {
-        path: '/message',
-        name: 'messageSend',
-        component: MessageSend
     },
     {
         path: '/login',
@@ -24,6 +19,11 @@ const routes = [
         path: '/create',
         name: 'createAccount',
         component: CreateAccount
+    },
+    {
+        path: '/details',
+        name: 'accountDetails',
+        component: accountDetails
     }
 ]
 
