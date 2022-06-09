@@ -34,7 +34,7 @@ def login():
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30), 'address': user.address, 'email': user.email}
         token = jwt.encode(data, app.config['SECRET_KEY'], algorithm="HS256")
 
-        return make_response(jsonify({'token': token}), 201)
+        return jsonify({'token': token}), 200
 
     return jsonify({"msg": "Incorrect login"})
 
@@ -48,13 +48,13 @@ def token_required(f):
             token = request.headers['x-access-token']
 
         if not token:
-            return jsonify({"msg": "Token is missing!"}), 403
+            return jsonify({"msg": "Token is missing!"}), 401
 
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             current_user = User.query.filter_by(email=data['email']).first()
         except:
-            return jsonify({"msg": "Token is invalid"}), 403
+            return jsonify({"msg": "Token is invalid"}), 401
 
         return f(current_user, *args, **kwargs)
 
@@ -109,27 +109,29 @@ class UserSchema(ma.Schema):
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
-#  TODO work with cookie and not with user_id
+
 @app.route('/portal/get', methods=['GET'])
 @token_required
 def get_user(user):
     """Return user data"""
-
-    return user_schema.jsonify(user)
+    return user_schema.jsonify(user), 200
 
 
 @app.route('/portal/create', methods=['POST'])
 def create_account():
     """Creates a user by reading all information from the request as json"""
-    # TODO make this cleaner! with data = request.get_json()
-    forename = request.json['forename']
-    lastname = request.json['lastname']
-    gender = request.json.get('gender')  # json.get() because this way, if value is null, there is no exception
-    address = request.json['address']
-    plz = request.json['plz']
-    # TODO no duplicate email in db!
-    email = request.json['email']
-    password = request.json['password']
+    data = request.get_json()
+
+    email = data['email']
+    if User.query.filter_by(email=email).first():
+        return jsonify({"msg": "Email ist bereits vergeben!"}), 200
+
+    forename = data['forename']
+    lastname = data['lastname']
+    gender = data.get('gender')  # data.get() because this way, if value is null, there is no exception and gender NULL
+    address = data['address']
+    plz = data['plz']
+    password = data['password']
 
     hashed_password = generate_password_hash(password, method='sha256')
 
@@ -141,7 +143,7 @@ def create_account():
     data = {"id": user.id}
     publish_rabbitmq(routing_key, data)
 
-    return jsonify({"msg": "Account created"})
+    return jsonify({"msg": "Account wurde erstellt."}), 201
 
 #  TODO work with cookie and not with user_id
 @app.route('/portal/update/<user_id>', methods=['PUT'])
@@ -150,14 +152,16 @@ def update_account(user_id):
     # Update user, if user with user_id exists
     user = User.query.get(int(user_id))
     if user is not None:
-        user.forename = update_if_request_contains(user.forename, request.json.get('forename'))
-        user.lastname = update_if_request_contains(user.lastname, request.json.get('lastname'))
-        user.gender = update_if_request_contains(user.gender, request.json.get('gender'))
-        user.address = update_if_request_contains(user.address, request.json.get('address'))
-        user.plz = update_if_request_contains(user.plz, request.json.get('plz'))
-        user.email = update_if_request_contains(user.email, request.json.get('email'))
+        data = request.get_json()
+
+        user.forename = update_if_request_contains(user.forename, data.get('forename'))
+        user.lastname = update_if_request_contains(user.lastname, data.get('lastname'))
+        user.gender = update_if_request_contains(user.gender, data.get('gender'))
+        user.address = update_if_request_contains(user.address, data.get('address'))
+        user.plz = update_if_request_contains(user.plz, data.get('plz'))
+        user.email = update_if_request_contains(user.email, data.get('email'))
         # TODO password also hashed!
-        user.password = update_if_request_contains(user.password, request.json.get('password'))
+        user.password = update_if_request_contains(user.password, data.get('password'))
 
         db.session.commit()
 
@@ -165,7 +169,7 @@ def update_account(user_id):
         data = {"id": user.id}
         publish_rabbitmq(routing_key, data)
 
-        return jsonify({"TODO": "NOT IMPLEMENTED YET", "msg:": "Account information updated"})
+        return {}, 204
     else:
         return jsonify({"msg": "Account not found"})
 
@@ -183,7 +187,7 @@ def delete_account(user_id):
         routing_key = 'portal.account.deleted'
         data = {"TODO": "NOT IMPLEMENTED YET", "id": int(user_id)}  # TODO Get user data and id, without password
         publish_rabbitmq(routing_key, data)
-        return user_schema.jsonify(user)
+        return {}, 204
     else:
         return jsonify({"msg": "Account not found"})
 
