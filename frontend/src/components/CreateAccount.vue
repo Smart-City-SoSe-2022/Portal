@@ -91,7 +91,8 @@ export default {
         method: 'POST',
         headers: myHeaders,
         body: raw,
-        redirect: 'follow'
+        redirect: 'follow',
+        credentials: "include"
       };
 
       fetch("http://server.it-humke.de:9001/portal/create", requestOptions)
@@ -123,7 +124,8 @@ export default {
           method: 'POST',
           headers: myHeaders,
           body: raw,
-          redirect: 'follow'
+          redirect: 'follow',
+          credentials: "include"
         };
 
         fetch("http://server.it-humke.de:9001/portal/message", requestOptions)

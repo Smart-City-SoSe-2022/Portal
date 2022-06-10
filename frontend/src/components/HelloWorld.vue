@@ -56,7 +56,8 @@ export default {
     printHelloWorld() {
       var requestOptions = {
         method: 'GET',
-        redirect: 'follow'
+        redirect: 'follow',
+        credentials: "include"
       };
 
       fetch("http://server.it-humke.de:9001/portal", requestOptions)
