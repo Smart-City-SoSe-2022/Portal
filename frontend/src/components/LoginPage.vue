@@ -61,7 +61,7 @@ export default {
         credentials: "include"
       };
 
-      fetch("http://localhost:5000/portal/login", requestOptions)
+      fetch("http://server.it-humke.de:9001/portal/login", requestOptions)
           .then(response => response.json())
           .then(result => {
             console.log(result)
