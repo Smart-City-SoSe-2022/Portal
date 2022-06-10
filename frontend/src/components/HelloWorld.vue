@@ -56,7 +56,8 @@ export default {
     printHelloWorld() {
       var requestOptions = {
         method: 'GET',
-        redirect: 'follow'
+        redirect: 'follow',
+        credentials: "include"
       };
 
       fetch("http://localhost:5000/portal", requestOptions)

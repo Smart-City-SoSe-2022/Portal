@@ -57,14 +57,14 @@ export default {
       var requestOptions = {
         method: 'GET',
         headers: myHeaders,
-        redirect: 'follow'
+        redirect: 'follow',
+        credentials: "include"
       };
 
       fetch("http://localhost:5000/portal/login", requestOptions)
           .then(response => response.json())
           .then(result => {
             console.log(result)
-            localStorage.setItem('token', result["token"])
           })
           .then(() => this.$router.push({
               name: "accountDetails"

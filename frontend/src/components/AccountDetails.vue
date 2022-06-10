@@ -17,14 +17,14 @@ export default {
     }
   },
   methods: {
-    getAccount() {
+    getAccountDetails() {
       var myHeaders = new Headers();
-      myHeaders.append("x-access-token", localStorage.getItem('token'));
 
       var requestOptions = {
         method: 'GET',
         headers: myHeaders,
-        redirect: 'follow'
+        redirect: 'follow',
+        credentials: "include"
       };
 
       fetch("http://localhost:5000/portal/get", requestOptions)
@@ -37,7 +37,7 @@ export default {
     }
   },
   created() {
-    this.getAccount()
+    this.getAccountDetails()
   }
 }
 </script>

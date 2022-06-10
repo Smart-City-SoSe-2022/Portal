@@ -91,11 +91,15 @@ def login():
     user = User.query.filter_by(email=auth.username).first()
 
     if user and check_password_hash(user.password, auth.password):
+        # User / email exists and password is correct, create token so user is logged in
         data = {'sub': user.id, 'name': user.fullname(),
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}
         token = jwt.encode(data, app.config['SECRET_KEY'], algorithm="HS256")
 
-        return jsonify({'token': token}), 200
+        resp = make_response(jsonify({'msg': "Login erfolgreich."}), 200)
+        resp.set_cookie('JWT', token, samesite=None)
+
+        return resp
 
     return jsonify({"msg": "Falsche Logindaten!"})
 
@@ -105,8 +109,8 @@ def token_required(f):
     def decorated(*args, **kwargs):
         token = None
 
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+        if 'JWT' in request.cookies:
+            token = request.cookies['JWT']
 
         if not token:
             return jsonify({"msg": "Token fehlt!"}), 401
