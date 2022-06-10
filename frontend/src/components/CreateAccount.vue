@@ -95,7 +95,7 @@ export default {
         credentials: "include"
       };
 
-      fetch("http://localhost:5000/portal/create", requestOptions)
+      fetch("http://server.it-humke.de:9001/portal/create", requestOptions)
           .then(response => response.text())
           .then(result => console.log(result))
           .then(() => this.$router.push({
@@ -128,7 +128,7 @@ export default {
           credentials: "include"
         };
 
-        fetch("http://localhost:5000/portal/message", requestOptions)
+        fetch("http://server.it-humke.de:9001/portal/message", requestOptions)
             .then(response => response.text())
             .then(result => console.log(result))
             .then(() => this.$router.push({

@@ -60,7 +60,7 @@ export default {
         credentials: "include"
       };
 
-      fetch("http://localhost:5000/portal", requestOptions)
+      fetch("http://server.it-humke.de:9001/portal", requestOptions)
           .then(response => response.text())
           .then(result => console.log(result))
           .catch(error => console.log('error', error));

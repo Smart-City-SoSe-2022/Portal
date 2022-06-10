@@ -198,7 +198,8 @@ def update_if_request_contains_password(user_pass, request_pass):
 def publish_rabbitmq(routing_key, data):
     """Publish a message given with data on the given routing key"""
     message = json.dumps(data)
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    credentials = pika.PlainCredentials(config["RABBITMQ_USER"], config["RABBITMQ_PASSWORD"])
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='10.104.41.215', credentials=credentials))
     channel = connection.channel()
     channel.exchange_declare(exchange='microservice.eventbus', exchange_type='topic')
     channel.basic_publish(

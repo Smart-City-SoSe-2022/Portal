@@ -38,15 +38,26 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      creationTimestamp: null
       labels:
         k8s-app: portal-backend
       name: portal-backend
     spec:
+      volumes:
+        - name: env
+          configMap:
+            name: portal-config
+            items: 
+              - key: env
+                path: .env
       containers:
-      - image: ghcr.io/smart-city-sose-2022/portal-backend:main
+      - image: ghcr.io/smart-city-sose-2022/portal-backend:58153f6f77130c5b77e3f36d6fdb722cac2fbad9
         imagePullPolicy: Always
         name: portal-backend
+        volumeMounts:
+          - name: env
+            readOnly: true
+            mountPath: /app/.env
+            subPath: .env
         resources: {}
         securityContext:
           privileged: false

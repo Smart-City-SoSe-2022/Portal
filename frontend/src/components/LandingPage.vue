@@ -1,5 +1,5 @@
 <template>
-Hello Landing Page
+Hier stand mal ein anderer Text
 </template>
 
 <script>
