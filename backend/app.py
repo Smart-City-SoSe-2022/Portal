@@ -87,6 +87,7 @@ def create_account():
 
 @app.route('/portal/login', methods=['GET'])
 def login():
+    """Takes the user email and password for authentication and returns a jwt as cookie"""
     auth = request.authorization
     user = User.query.filter_by(email=auth.username).first()
 
@@ -105,6 +106,7 @@ def login():
 
 
 def token_required(f):
+    """Wrapper function for all API endpoints requiring the user to be logged in"""
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
