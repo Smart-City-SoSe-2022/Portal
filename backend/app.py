@@ -11,7 +11,7 @@ from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
+CORS(app)
 
 config = dotenv_values(".env")
 app.config['SQLALCHEMY_DATABASE_URI'] = config["DB_FULL_URI"]
@@ -108,6 +108,7 @@ def login():
     return jsonify({"msg": "Falsche Logindaten!"})
 
 
+@cross_origin()
 def token_required(f):
     """Wrapper function for all API endpoints requiring the user to be logged in"""
     @wraps(f)
