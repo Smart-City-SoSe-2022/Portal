@@ -55,9 +55,26 @@ user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
 
-@app.route('/portal/create', methods=['POST'])
+def _build_cors_preflight_response():
+    response = make_response()
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "*")
+    response.headers.add("Access-Control-Allow-Methods", "*")
+    response.headers.add("Access-Control-Allow-Credentials", True)
+    return response
+
+
+def _corsify_actual_response(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
+
+@app.route('/portal/create', methods=['POST', 'OPTIONS'])
 def create_account():
     """Creates a user by reading all information from the request as json"""
+    if request.method == "OPTIONS":  # CORS preflight
+        return _build_cors_preflight_response()
+
     data = request.get_json()
 
     email = data['email']
@@ -81,7 +98,7 @@ def create_account():
     data = {"id": user.id}
     publish_rabbitmq(routing_key, data)
 
-    return jsonify({"msg": "Account wurde erstellt."}), 201
+    return _corsify_actual_response(make_response(jsonify({"msg": "Account wurde erstellt."}), 201))
 
 
 @app.route('/portal/login', methods=['GET'])
