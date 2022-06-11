@@ -4,14 +4,14 @@ from flask_sqlalchemy import SQLAlchemy
 import datetime
 import jwt
 from flask_marshmallow import Marshmallow
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 import pika
 from dotenv import dotenv_values
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 config = dotenv_values(".env")
 app.config['SQLALCHEMY_DATABASE_URI'] = config["DB_FULL_URI"]
@@ -58,7 +58,6 @@ users_schema = UserSchema(many=True)
 
 
 @app.route('/portal/create', methods=['POST'])
-@cross_origin()
 def create_account():
     """Creates a user by reading all information from the request as json"""
     data = request.get_json()
@@ -88,7 +87,6 @@ def create_account():
 
 
 @app.route('/portal/login', methods=['GET'])
-@cross_origin()
 def login():
     """Takes the user email and password for authentication and returns a jwt as cookie"""
     auth = request.authorization
@@ -108,7 +106,6 @@ def login():
     return jsonify({"msg": "Falsche Logindaten!"})
 
 
-@cross_origin()
 def token_required(f):
     """Wrapper function for all API endpoints requiring the user to be logged in"""
     @wraps(f)
@@ -136,7 +133,6 @@ def token_required(f):
 
 @app.route('/portal/get', methods=['GET'])
 @token_required
-@cross_origin()
 def get_user(user):
     """Return user data"""
     return user_schema.jsonify(user), 200
@@ -144,7 +140,6 @@ def get_user(user):
 
 @app.route('/portal/update', methods=['PUT'])
 @token_required
-@cross_origin()
 def update_account(user):
     """Updates user account information"""
     data = request.get_json()
@@ -172,7 +167,6 @@ def update_account(user):
 
 @app.route('/portal/delete', methods=['DELETE'])
 @token_required
-@cross_origin()
 def delete_account(user):
     """Deletes the user and publishes its data to RabbitMQ"""
     db.session.delete(user)
