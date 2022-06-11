@@ -4,18 +4,20 @@ from flask_sqlalchemy import SQLAlchemy
 import datetime
 import jwt
 from flask_marshmallow import Marshmallow
+from flask_cors import CORS
 import pika
 from dotenv import dotenv_values
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+CORS(app)
 
 config = dotenv_values(".env")
 app.config['SQLALCHEMY_DATABASE_URI'] = config["DB_FULL_URI"]
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = config["JWT_SECRET_KEY"]
-app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['CORS_SUPPORTS_CREDENTIALS'] = True
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
@@ -55,26 +57,9 @@ user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
 
-def _build_cors_preflight_response():
-    response = make_response()
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    response.headers.add("Access-Control-Allow-Headers", "*")
-    response.headers.add("Access-Control-Allow-Methods", "*")
-    response.headers.add("Access-Control-Allow-Credentials", True)
-    return response
-
-
-def _corsify_actual_response(response):
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
-
-
-@app.route('/portal/create', methods=['POST', 'OPTIONS'])
+@app.route('/portal/create', methods=['POST'])
 def create_account():
     """Creates a user by reading all information from the request as json"""
-    if request.method == "OPTIONS":  # CORS preflight
-        return _build_cors_preflight_response()
-
     data = request.get_json()
 
     email = data['email']
@@ -98,7 +83,7 @@ def create_account():
     data = {"id": user.id}
     publish_rabbitmq(routing_key, data)
 
-    return _corsify_actual_response(make_response(jsonify({"msg": "Account wurde erstellt."}), 201))
+    return jsonify({"msg": "Account wurde erstellt."}), 201
 
 
 @app.route('/portal/login', methods=['GET'])
