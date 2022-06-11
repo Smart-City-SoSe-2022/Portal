@@ -4,14 +4,12 @@ from flask_sqlalchemy import SQLAlchemy
 import datetime
 import jwt
 from flask_marshmallow import Marshmallow
-from flask_cors import CORS
 import pika
 from dotenv import dotenv_values
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
 
 config = dotenv_values(".env")
 app.config['SQLALCHEMY_DATABASE_URI'] = config["DB_FULL_URI"]
