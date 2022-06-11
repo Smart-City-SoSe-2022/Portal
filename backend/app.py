@@ -17,6 +17,7 @@ config = dotenv_values(".env")
 app.config['SQLALCHEMY_DATABASE_URI'] = config["DB_FULL_URI"]
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = config["JWT_SECRET_KEY"]
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
