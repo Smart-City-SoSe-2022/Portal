@@ -11,13 +11,12 @@ from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-CORS(app, origins="http://server.it-humke.de", supports_credentials=True)
+CORS(app, supports_credentials=True)
 
 config = dotenv_values(".env")
 app.config['SQLALCHEMY_DATABASE_URI'] = config["DB_FULL_URI"]
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = config["JWT_SECRET_KEY"]
-app.config['CORS_SUPPORTS_CREDENTIALS'] = True
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
