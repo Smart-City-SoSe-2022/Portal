@@ -1,4 +1,4 @@
-FROM python:3.7 as build-stage
+FROM python:3.9 as build-stage
 RUN apt-get update
 
 WORKDIR /app
