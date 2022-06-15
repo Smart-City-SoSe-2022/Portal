@@ -144,7 +144,8 @@ def update_account(user):
     data = request.get_json()
 
     email = data.get('email')
-    if User.query.filter_by(email=email).first():
+    alt_user = User.query.filter_by(email=email).first()
+    if alt_user and alt_user != user:
         return jsonify({"msg": "Email ist bereits vergeben!"}), 200
 
     user.forename = update_if_request_contains(user.forename, data.get('forename'))
@@ -180,7 +181,7 @@ def delete_account(user):
 
 def update_if_request_contains(user_val, request_val):
     new_val = user_val
-    if request_val is not None:
+    if request_val is not None and request_val != "":
         new_val = request_val
 
     return new_val
@@ -188,7 +189,7 @@ def update_if_request_contains(user_val, request_val):
 
 def update_if_request_contains_password(user_pass, request_pass):
     new_val = user_pass
-    if request_pass is not None:
+    if request_pass is not None and request_pass != "":
         hashed_password = generate_password_hash(request_pass, method='sha256')
         new_val = hashed_password
 
