@@ -6,6 +6,7 @@
       <div id="navcol-1" class="collapse navbar-collapse" style="transform: perspective(2220px);">
         <router-link class="btn btn-primary ms-auto" role="button" to="/create">Registrieren</router-link>
         <router-link class="btn btn-primary" role="button" to="/login">Anmelden</router-link>
+        <router-link class="btn btn-primary" role="button" to="/details">Accountinformationen</router-link>
       </div>
     </div>
   </nav>
