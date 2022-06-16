@@ -18,9 +18,9 @@
               </div>
             </form>
 
-            <p>
-              <router-link class="btn btn-primary" role="button" to="/details">Account löschen</router-link>
-            </p>
+            <div class="mb-3">
+              <button class="btn btn-primary d-block w-100" v-on:click="deleteAccount">Account löschen</button>
+            </div>
 
           </div>
         </div>
@@ -84,6 +84,26 @@ export default {
           .then(result => console.log(result))
           .then(() => this.$router.push({
             name: "accountDetails"
+          }))
+          .catch(error => console.log('error', error));
+    },
+
+    deleteAccount() {
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      var requestOptions = {
+        method: 'DELETE',
+        headers: myHeaders,
+        redirect: 'follow',
+        credentials: "include"
+      };
+
+      fetch("http://server.it-humke.de:9001/portal/delete", requestOptions)
+          .then(response => response.text())
+          .then(result => console.log(result))
+          .then(() => this.$router.push({
+            name: "landingPage"
           }))
           .catch(error => console.log('error', error));
     }
