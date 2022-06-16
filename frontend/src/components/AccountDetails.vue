@@ -19,7 +19,7 @@
             </form>
 
             <div class="mb-3">
-              <button class="btn btn-primary d-block w-100" v-on:click="deleteAccount">Account löschen</button>
+              <button class="btn btn-primary d-block w-100" id="deleteAccountButton" @click="deleteAccount">Account löschen</button>
             </div>
 
           </div>
@@ -115,5 +115,7 @@ export default {
 </script>
 
 <style scoped>
-
+#deleteAccountButton {
+  background: red;
+}
 </style>
