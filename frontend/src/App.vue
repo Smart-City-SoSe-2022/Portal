@@ -7,6 +7,7 @@
         <router-link class="btn btn-primary ms-auto" role="button" to="/create">Registrieren</router-link>
         <router-link class="btn btn-primary" role="button" to="/login">Anmelden</router-link>
         <router-link class="btn btn-primary" role="button" to="/details">Accountinformationen</router-link>
+        <button class="btn btn-primary" @click="logout">Abmelden</button>
       </div>
     </div>
   </nav>
@@ -42,7 +43,28 @@
 
 export default {
   name: 'App',
-  components: {}
+  components: {},
+  methods: {
+    logout() {
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow',
+        credentials: "include"
+      };
+
+      fetch("http://server.it-humke.de:9001/portal/logout", requestOptions)
+          .then(response => response.text())
+          .then(result => console.log(result))
+          .then(() => this.$router.push({
+            name: "landingPage"
+          }))
+          .catch(error => console.log('error', error));
+    }
+  }
 }
 </script>
 
