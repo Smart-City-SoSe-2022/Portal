@@ -11,6 +11,17 @@
       </div>
     </div>
   </nav>
+  <div class="container">
+    <ul class="list-inline mb-2">
+      <li class="list-inline-item"><a href="http://server.it-humke.de:8003">Stadtverwaltung</a></li>
+      <li class="list-inline-item"><span>⋅</span></li>
+      <li class="list-inline-item"><a href="http://server.it-humke.de:8002">Fahrzeugvermietung</a></li>
+      <li class="list-inline-item"><span>⋅</span></li>
+      <li class="list-inline-item"><a href="#">Bank</a></li>
+      <li class="list-inline-item"><span>⋅</span></li>
+      <li class="list-inline-item"><a href="#">Local Finder</a></li>
+    </ul>
+  </div>
   <router-view/>
   <footer class="bg-light footer">
     <div class="container">
@@ -26,13 +37,6 @@
             <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
           </ul>
           <p class="text-muted small mb-4 mb-lg-0">© Smart City 2022. All Rights Reserved.</p>
-        </div>
-        <div class="col-lg-6 text-center text-lg-end my-auto h-100">
-          <ul class="list-inline mb-0">
-            <li class="list-inline-item"><a href="#"><i class="fa fa-facebook fa-2x fa-fw"></i></a></li>
-            <li class="list-inline-item"><a href="#"><i class="fa fa-twitter fa-2x fa-fw"></i></a></li>
-            <li class="list-inline-item"><a href="#"><i class="fa fa-instagram fa-2x fa-fw"></i></a></li>
-          </ul>
         </div>
       </div>
     </div>
