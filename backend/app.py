@@ -169,7 +169,7 @@ def update_account(user):
 @token_required
 def logout(user):
     """Logs the user out by returning an invalid JWT"""
-    data = {}
+    data = {'exp': 0}
     token = jwt.encode(data, 'LOGGEDOUT', algorithm="HS256")
 
     resp = make_response(jsonify({'msg': "Erfolgreich ausgeloggt."}), 200)
