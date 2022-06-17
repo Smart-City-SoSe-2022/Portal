@@ -165,6 +165,19 @@ def update_account(user):
     return {}, 204
 
 
+@app.route('/portal/logout', methods=['GET'])
+@token_required
+def logout(user):
+    """Logs the user out by returning an invalid JWT"""
+    data = {'exp': 0}
+    token = jwt.encode(data, 'LOGGEDOUT', algorithm="HS256")
+
+    resp = make_response(jsonify({'msg': "Erfolgreich ausgeloggt."}), 200)
+    resp.set_cookie('JWT', token, samesite=None)
+
+    return resp
+
+
 @app.route('/portal/delete', methods=['DELETE'])
 @token_required
 def delete_account(user):
