@@ -66,9 +66,7 @@ export default {
           .then(result => {
             console.log(result)
           })
-          .then(() => this.$router.push({
-              name: "accountDetails"
-            }))
+          .then(() => window.location.href ="/")
           .catch(error => console.log('error', error));
     }
   }
