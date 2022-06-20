@@ -17,9 +17,9 @@
       <li class="list-inline-item"><span>⋅</span></li>
       <li class="list-inline-item"><a href="http://server.it-humke.de:8002">Fahrzeugvermietung</a></li>
       <li class="list-inline-item"><span>⋅</span></li>
-      <li class="list-inline-item"><a href="#">Bank</a></li>
+      <li class="list-inline-item"><a href="http://server.it-humke.de:8005">Bank</a></li>
       <li class="list-inline-item"><span>⋅</span></li>
-      <li class="list-inline-item"><a href="#">Local Finder</a></li>
+      <li class="list-inline-item"><a href="http://server.it-humke.de:8004">Local Finder</a></li>
     </ul>
   </div>
   <router-view/>
