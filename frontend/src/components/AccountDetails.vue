@@ -1,5 +1,5 @@
 <template>
-  <div class="container" id="testid">
+  <div class="container">
     <div class="row d-flex justify-content-center">
       <div class="col-md-6 col-xl-4">
         <div class="card mb-5">
