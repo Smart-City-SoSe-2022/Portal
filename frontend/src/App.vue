@@ -65,7 +65,7 @@ export default {
         credentials: "include"
       };
 
-      const response = fetch("http://localhost:5000/portal/get", requestOptions)
+      const response = fetch("http://server.it-humke.de:9001/portal/get", requestOptions)
       const data = await response
       return data.status === 200
     },
