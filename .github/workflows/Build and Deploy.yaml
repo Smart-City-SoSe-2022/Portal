@@ -6,10 +6,9 @@ name: Build and Deploy
 # documentation.
 
 on:
-  pull_request:
-    branches: [ main ]
-    types:
-      - closed
+  push:
+    branches:
+      - master
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -126,7 +125,7 @@ jobs:
           
   deploy_backend:
     name: Deploy Backend
-    if: github.event.pull_request.merged == true
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     needs: [ build_backend ]
     runs-on: ubuntu-latest
     steps:
@@ -152,7 +151,7 @@ jobs:
             
   deploy_frontend:
     name: Deploy Frontend
-    if: github.event.pull_request.merged == true
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:
