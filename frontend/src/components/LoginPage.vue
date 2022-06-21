@@ -28,7 +28,6 @@
               <div class="mb-3">
                 <button class="btn btn-primary d-block w-100" type="submit">Login</button>
               </div>
-              <p class="text-muted">Passwort vergessen?</p>
             </form>
           </div>
         </div>
@@ -66,9 +65,7 @@ export default {
           .then(result => {
             console.log(result)
           })
-          .then(() => this.$router.push({
-              name: "accountDetails"
-            }))
+          .then(() => window.location.href ="/")
           .catch(error => console.log('error', error));
     }
   }

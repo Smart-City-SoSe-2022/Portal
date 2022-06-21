@@ -119,15 +119,29 @@ def token_required(f):
 
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-            current_user = User.query.get(data['sub'])
-            if current_user is None:
-                return jsonify({"msg": "Token ist ungültig!"}), 401
+            if data:
+                current_user = User.query.get(data['sub'])
+                if current_user is None:
+                    return jsonify({"msg": "Token ist ungültig!"}), 401
+            else:
+                # Request is /portal/get/<user_id>
+                # The request for user data comes from another microservice and does not contain the id in the jwt
+                return f(*args, **kwargs)
         except:
             return jsonify({"msg": "Token ist ungültig!"}), 401
 
+        # Request is /portal/get
+        # The request for user data comes from a user and contains the id in the jwt
         return f(current_user, *args, **kwargs)
 
     return decorated
+
+
+@app.route('/portal/get/<user_id>', methods=['GET'])
+@token_required
+def get_user_service(user_id):
+    """Return user data for microservices"""
+    return user_schema.jsonify(User.query.get(user_id)), 200
 
 
 @app.route('/portal/get', methods=['GET'])
