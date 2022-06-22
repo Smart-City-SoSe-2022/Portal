@@ -102,40 +102,6 @@ export default {
             name: "landingPage"
           }))
           .catch(error => console.log('error', error));
-    },
-    sendMessage() {
-      if (!this.message) {
-        this.error = "Bitte eine Nachricht eingeben"
-      } else {
-        var routing_key = this.routing_key
-        if (!routing_key) {
-          routing_key = '*.#'
-        }
-
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-
-        var raw = JSON.stringify({
-          "routing_key": routing_key,
-          "message": this.message
-        });
-
-        var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: raw,
-          redirect: 'follow',
-          credentials: "include"
-        };
-
-        fetch("http://server.it-humke.de:9001/portal/message", requestOptions)
-            .then(response => response.text())
-            .then(result => console.log(result))
-            .then(() => this.$router.push({
-              name: "helloWorld"
-            }))
-            .catch(error => console.log('error', error));
-      }
     }
   }
 }
