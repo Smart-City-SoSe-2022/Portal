@@ -24,7 +24,6 @@ env:
 
 jobs:
   build:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -76,7 +75,6 @@ jobs:
 
         
   build_backend:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -129,7 +127,7 @@ jobs:
           
   deploy_backend:
     name: Deploy Backend
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     needs: [ build_backend ]
     runs-on: ubuntu-latest
     steps:
@@ -155,7 +153,7 @@ jobs:
             
   deploy_frontend:
     name: Deploy Frontend
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:
