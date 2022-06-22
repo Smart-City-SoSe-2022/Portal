@@ -72,6 +72,8 @@ export default {
           .then(() => {
             if (status === 200) {
               window.location.href = "/"
+            } else {
+              alert("Falsche Logindaten!")
             }
           })
           .catch(error => console.log('error', error));
