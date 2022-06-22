@@ -60,12 +60,20 @@ export default {
         credentials: "include"
       };
 
+      var status = 0
       fetch("http://server.it-humke.de:9001/portal/login", requestOptions)
-          .then(response => response.json())
+          .then(response => {
+            response.json()
+            status = response.status
+          })
           .then(result => {
             console.log(result)
           })
-          .then(() => window.location.href ="/")
+          .then(() => {
+            if (status === 200) {
+              window.location.href = "/"
+            }
+          })
           .catch(error => console.log('error', error));
     }
   }

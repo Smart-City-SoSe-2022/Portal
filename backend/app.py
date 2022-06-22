@@ -102,7 +102,7 @@ def login():
 
         return resp
 
-    return jsonify({"msg": "Falsche Logindaten!"})
+    return jsonify({"msg": "Falsche Logindaten!"}), 401
 
 
 def token_required(f):
