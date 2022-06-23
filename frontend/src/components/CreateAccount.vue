@@ -98,7 +98,7 @@ export default {
       var status = 0
       fetch("http://server.it-humke.de:9001/portal/create", requestOptions)
           .then(response => {
-            response.text()
+            response.json()
             status = response.status
           })
           .then(result => console.log(result))
