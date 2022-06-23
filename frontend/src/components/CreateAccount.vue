@@ -95,12 +95,25 @@ export default {
         credentials: "include"
       };
 
+      var status = 0
       fetch("http://server.it-humke.de:9001/portal/create", requestOptions)
-          .then(response => response.text())
+          .then(response => {
+            response.text()
+            status = response.status
+          })
           .then(result => console.log(result))
-          .then(() => this.$router.push({
-            name: "landingPage"
-          }))
+          .then(() => {
+            if (status === 201) {
+              alert("Account erfolgreich erstellt!")
+              this.$router.push({
+                name: "landingPage"
+              })
+            } else if (status === 200) {
+              alert("Bitte alle Felder ausfüllen! Geschlecht ist optional.")
+            } else if (status === 401) {
+              alert("Email bereits vergeben!")
+            }
+          })
           .catch(error => console.log('error', error));
     }
   }
