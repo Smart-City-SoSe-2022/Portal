@@ -63,7 +63,7 @@ def create_account():
 
     email = data['email']
     if User.query.filter_by(email=email).first():
-        return jsonify({"msg": "Email ist bereits vergeben!"}), 200
+        return jsonify({"msg": "Email ist bereits vergeben!"}), 401
 
     forename = data['forename']
     lastname = data['lastname']
@@ -71,6 +71,9 @@ def create_account():
     address = data['address']
     plz = data['plz']
     password = data['password']
+
+    if forename == '' or lastname == '' or address == '' or plz == '' or email == '' or password == '':
+        return jsonify({"msg": "Bitte alle Felder ausfüllen! Geschlecht ist optional"}), 200
 
     hashed_password = generate_password_hash(password, method='sha256')
 
