@@ -72,7 +72,8 @@ def create_account():
     plz = data['plz']
     password = data['password']
 
-    if forename == '' or lastname == '' or address == '' or plz == '' or email == '' or password == '':
+    if forename == '' or forename is None or lastname == '' or lastname is None or address == '' or address is None \
+            or plz == '' or plz is None or email == '' or email is None or password == '' or password is None:
         return jsonify({"msg": "Bitte alle Felder ausfüllen! Geschlecht ist optional"}), 200
 
     hashed_password = generate_password_hash(password, method='sha256')
