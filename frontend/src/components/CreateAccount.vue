@@ -101,7 +101,9 @@ export default {
             response.json()
             status = response.status
           })
-          .then(result => console.log(result))
+          .then(result => {
+            console.log(result)
+          })
           .then(() => {
             if (status === 201) {
               alert("Account erfolgreich erstellt!")
