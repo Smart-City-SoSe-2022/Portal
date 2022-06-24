@@ -7,10 +7,10 @@ name: Build & Deploy on Merge
 
 on:
   pull_request:
-    branches: [ 'master' ]
+    branches: [ 'main' ]
     types: [ 'closed' ]
   push:
-    branches: [ 'master' ]
+    branches: [ 'main' ]
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
