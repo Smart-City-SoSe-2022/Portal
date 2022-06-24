@@ -1,4 +1,4 @@
-name: Docker Build
+name: Build & Deploy on Merge
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,10 @@ name: Docker Build
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ 'master' ]
+    types: [ 'closed' ]
+  push:
+    tags: [ 'v*.*.*' ]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -20,8 +23,8 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    if: ${{ github.actor == 'lhumke' || github.event_name == 'pull_request' }}
     permissions:
       contents: read
       packages: write
@@ -73,6 +76,7 @@ jobs:
         
   build_backend:
     runs-on: ubuntu-latest
+    if: ${{ github.actor == 'lhumke' || github.event_name == 'pull_request' }}
     permissions:
       contents: read
       packages: write
@@ -122,4 +126,54 @@ jobs:
             
           labels: ${{ steps.meta.outputs.labels }}
           
+  deploy_backend:
+    name: Deploy Backend
+    needs: [ build_backend ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set the Kubernetes context
+        uses: azure/k8s-set-context@v2
+        with:
+          method: service-account
+          k8s-url: https://217.160.47.130:6443
+          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
+
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Deploy to the Kubernetes cluster
+        uses: azure/k8s-deploy@v1
+        with:
+          namespace: default
+          manifests: |
+            backend/manifest/deployment.yaml
+            backend/manifest/service.yaml
+          images: |
+            ${{ env.REGISTRY }}/${{ env.BACKEND_NAME }}:${{ github.sha }}
+            
+  deploy_frontend:
+    name: Deploy Frontend
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set the Kubernetes context
+        uses: azure/k8s-set-context@v2
+        with:
+          method: service-account
+          k8s-url: https://217.160.47.130:6443
+          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
+
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Deploy to the Kubernetes cluster
+        uses: azure/k8s-deploy@v1
+        with:
+          namespace: default
+          manifests: |
+            frontend/manifest/deployment.yaml
+            frontend/manifest/service.yaml
+          images: |
+            ${{ env.REGISTRY }}/${{ env.FRONTEND_NAME }}:${{ github.sha }}
+
 
