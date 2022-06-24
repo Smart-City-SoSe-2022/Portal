@@ -10,8 +10,7 @@ on:
     branches: [ 'master' ]
     types: [ 'closed' ]
   push:
-    tags: [ 'v*.*.*' ]
-
+    branches: [ 'master' ]
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
