@@ -102,9 +102,10 @@ export default {
       fetch("http://server.it-humke.de:9001/portal/delete", requestOptions)
           .then(response => response.text())
           .then(result => console.log(result))
-          .then(() => this.$router.push({
-            name: "landingPage"
-          }))
+          .then(() => {
+            alert("Account gelöscht.")
+            window.location.href = "/"
+          })
           .catch(error => console.log('error', error));
     }
   },
