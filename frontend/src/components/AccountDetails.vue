@@ -79,12 +79,23 @@ export default {
         credentials: "include"
       };
 
+      var status = 0
       fetch("http://server.it-humke.de:9001/portal/update", requestOptions)
-          .then(response => response.text())
+          .then(response => {
+            response.json()
+            status = response.status
+          })
           .then(result => console.log(result))
-          .then(() => this.$router.push({
-            name: "accountDetails"
-          }))
+          .then(() => {
+            if (status === 204) {
+              alert("Account erfolgreich aktualisiert!")
+              this.$router.push({
+                name: "accountDetails"
+              })
+            } else if (status === 200) {
+              alert("Email bereits vergeben!")
+            }
+          })
           .catch(error => console.log('error', error));
     },
 
